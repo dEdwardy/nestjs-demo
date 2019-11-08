@@ -26,13 +26,7 @@ export class UserController {
         user.id = params.id;
         return this.userService.deleteUser(user);
     }
-    // @Put()
-    // updateUser(@Body() params){
-    //     let user = new User();
-    //     user.id = params.id;
-    //     user.name = params.name;
-    //     return ;
-    // }
+    // @gi
     @Get('/:id')
     getUser(@Param() id){
         return this.userService.findUser(id);
