@@ -1,7 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm'
-import  { UserModule } from './user/user.module'
+import  { UserModule } from './modules/user/user.module'
+import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
+import { LoggingInterceptor } from './core/interceptors/logging.interceptor';
+import { TransformInterceptor } from './core/interceptors/transform.interceptor';
+import { AuthModule } from './modules/auth/auth.module';
+import { PostModule } from './modules/post/post.module';
+import { DemoRolesGuard } from './core/guards/demo-roles.guard';
+import { DemoAuthGuard } from './core/guards/demo-auth.guard';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -14,9 +21,29 @@ import  { UserModule } from './user/user.module'
       entities: ["dist/**/*.entity{.ts,.js}"],
       synchronize: true,
     }),
-    UserModule
+    UserModule,
+    AuthModule,
+    PostModule
   ],
   controllers: [],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor
+    },
+    {
+      provide:APP_GUARD,
+      useClass: DemoAuthGuard
+    },
+    {
+      provide:APP_GUARD,
+      useClass: DemoRolesGuard
+    }
+  ],
 })
 export class AppModule {}
