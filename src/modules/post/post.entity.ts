@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany } from 'typeorm';
 import { User } from '../user/user.entity';
 
 @Entity()
@@ -12,12 +12,16 @@ export class Post {
     @Column('longtext', { nullable: true})  
     body:string;
 
-    @CreateDateColumn()
+    @CreateDateColumn({ comment: '创建日期' })
     created: Date;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({ comment: '修改日期' })
     updated: Date;
+
 
     @ManyToOne(type => User, user =>user.posts)
     user:User;
+
+    @ManyToMany(type => User, user => user.voted)
+    liked:User[]
 }

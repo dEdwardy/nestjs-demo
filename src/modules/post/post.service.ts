@@ -20,6 +20,28 @@ export class PostService {
         }) 
         return entity;
     }
+    async vote(id:string, user:User){
+        return await this.postRepository
+                        .createQueryBuilder()
+                        .relation(User,'voted')
+                        .of(user)
+                        .add(id);
+    }
+
+    async unVote(id:string, user:User){
+        return await this.postRepository
+                        .createQueryBuilder()
+                        .relation(User,'voted')
+                        .of(user)
+                        .remove({ id });
+    }
+    async liked(id:string) {
+        return await this.postRepository
+                        .createQueryBuilder()
+                        .relation(Post,'liked')
+                        .of(id)
+                        .loadMany();
+    }
     deletePost(id:string){
         return this.postRepository.delete(id)
     } 

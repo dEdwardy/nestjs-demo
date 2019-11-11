@@ -1,4 +1,4 @@
-import { Controller, Body, Post, Delete, Param, Put, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Body, Post, Delete, Param, Put, Get, Req, UseGuards, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { postDto } from './post.dto';
 import { PostService } from './post.service';
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
@@ -22,6 +22,22 @@ export class PostController {
         return this.postService.addPost(data, user)
     }
     
+    @Post(':id/vote')
+    @ApiOperation({ title: '用户给post(帖子) 投票/喜欢/点赞等' })
+    @UseGuards(AuthGuard('jwt'))
+    async vote(@Param('id') id:string,@User() user:UserEntity){
+        console.log(user)
+        return this.postService.vote(id, user)
+    }
+
+    @Delete(':id/unvote')
+    @ApiOperation({ title: '用户给post(帖子) 取消 投票/喜欢/点赞等' })
+    @UseGuards(AuthGuard('jwt'))
+    async unVote(@Param('id') id:string,@User() user:UserEntity){
+        console.log(user)
+        return this.postService.unVote(id, user)
+    }
+
     @Delete(':id')
     @ApiOperation({ title: '根据Id删除post' })
     deletePost(@Param('id') id:string){
@@ -44,5 +60,11 @@ export class PostController {
     @ApiOperation({ title: '根据Id查询单个post'})
     getOne(@Param('id') id:string){
         return this.postService.getOne(id)
+    }
+
+    @Get(':id/liked')
+    @UseInterceptors(ClassSerializerInterceptor)
+    async liked(@Param('id') id:string){
+        return await this.postService.liked(id)
     }
 }

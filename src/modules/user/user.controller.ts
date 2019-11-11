@@ -45,10 +45,16 @@ export class UserController {
     }
 
     @Get()
-    @SetMetadata('roles',['guests'])
     @UseInterceptors(ClassSerializerInterceptor)
     @ApiOperation({ title: '查询所有用户' })
     getAll() {
         return this.userService.findAll();
+    }
+
+    @Get(':id/liked')
+    @UseInterceptors(ClassSerializerInterceptor)
+    @ApiOperation({ title: '查询用户喜欢/投票的 posts' })
+    async liked(@Param('id') id:string) {
+        return this.userService.liked(id);
     }
 }

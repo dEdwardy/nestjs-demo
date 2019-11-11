@@ -64,5 +64,8 @@ export class UserService {
     async findByName(username: string): Promise<any> {
         return await this.userReposity.findOne({ username });
     }
+    async liked(id:string){
+        return this.userReposity.findOne(id,{ relations: ['voted','voted.user']})
+    }
 
 }
