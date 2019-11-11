@@ -9,6 +9,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { PostModule } from './modules/post/post.module';
 import { DemoRolesGuard } from './core/guards/demo-roles.guard';
 import { DemoAuthGuard } from './core/guards/demo-auth.guard';
+import { CategoryModule } from './modules/category/category.module';
+import { CategoryController } from './module/category/category.controller';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -23,9 +25,10 @@ import { DemoAuthGuard } from './core/guards/demo-auth.guard';
     }),
     UserModule,
     AuthModule,
-    PostModule
+    PostModule,
+    CategoryModule
   ],
-  controllers: [],
+  controllers: [CategoryController],
   providers: [
     AppService,
     {
