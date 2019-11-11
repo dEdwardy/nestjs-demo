@@ -1,7 +1,10 @@
-import { Controller, Body, Post, Delete, Param, Put, Get } from '@nestjs/common';
+import { Controller, Body, Post, Delete, Param, Put, Get, Req, UseGuards } from '@nestjs/common';
 import { postDto } from './post.dto';
 import { PostService } from './post.service';
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from '../../core/decorators/user.decorator';
+import { User as UserEntity } from '../user/user.entity';
 
 @ApiUseTags('Posts')
 @Controller('posts')
@@ -13,8 +16,10 @@ export class PostController {
     }
     @Post()
     @ApiOperation({ title: '添加post' })
-    addPost(@Body() data:postDto){
-        return this.postService.addPost(data)
+    @UseGuards(AuthGuard('jwt'))
+    addPost(@Body() data:postDto,@User() user:UserEntity){
+        console.log(user)
+        return this.postService.addPost(data, user)
     }
     
     @Delete(':id')

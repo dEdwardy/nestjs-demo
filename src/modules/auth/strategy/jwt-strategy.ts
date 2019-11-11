@@ -21,6 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy){
         if(!entity){
             done(new UnauthorizedException('未找到用户'))
         }
+        //相当于  return entity
         done(null, entity)
     }
 }
