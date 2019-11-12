@@ -1,13 +1,16 @@
-import { Controller, Body, Post, Delete, Param, Put, Get, Req, UseGuards, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Controller, Body, Post, Delete, Param, Put, Get, Req, UseGuards, UseInterceptors, ClassSerializerInterceptor, Query } from '@nestjs/common';
 import { postDto } from './post.dto';
 import { PostService } from './post.service';
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../../core/decorators/user.decorator';
 import { User as UserEntity } from '../user/user.entity';
+import { ListOptions } from '../../core/decorators/list-options.decorator';
+import { ListOptionsInterface } from '../../core/interfaces/list-options.interface';
 
 @ApiUseTags('Posts')
 @Controller('posts')
+@UseInterceptors(ClassSerializerInterceptor)
 export class PostController {
     constructor(
         private readonly postService: PostService
@@ -47,13 +50,14 @@ export class PostController {
     @Put(':id')
     @ApiOperation({ title: '修改post' })
     updatePost(@Param('id') id:string, data:postDto){
+        console.log(data)
         return this.postService.updatePost(id, data)
     }
 
     @Get()
     @ApiOperation({ title: '查询所有post'})
-    getAll(){
-        return this.postService.getAll()
+    getAll(@ListOptions() options:ListOptionsInterface){
+        return this.postService.getAll(options)
     }
 
     @Get(':id')

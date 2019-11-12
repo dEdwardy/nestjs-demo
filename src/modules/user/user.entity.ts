@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, OneToMany, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Exclude } from 'class-transformer'
-import { type } from 'os';
 import { Post } from '../post/post.entity';
 @Entity()
 export class User {

@@ -5,7 +5,7 @@ import { userDto, updatePwdDto } from './user.dto';
 
 @Controller('users')
 @ApiUseTags('用户')
-// @UseInterceptors(LoggingInterceptor)
+@UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
     constructor(public userService: UserService) {
 
@@ -31,28 +31,24 @@ export class UserController {
     }
     
     @Put(':id')
-    @UseInterceptors(ClassSerializerInterceptor)
     @ApiOperation({ title: '修改用户密码' })
     updateUser(@Param('id') id: string,@Body() data:updatePwdDto) {
         return this.userService.updatePwd(id, data);
     }
     
     @Get(':id')
-    @UseInterceptors(ClassSerializerInterceptor)
     @ApiOperation({ title: '根据ID查询用户' })
     getUser(@Param('id') id: string): Promise<any> {
         return this.userService.findUserById(id);
     }
 
     @Get()
-    @UseInterceptors(ClassSerializerInterceptor)
     @ApiOperation({ title: '查询所有用户' })
     getAll() {
         return this.userService.findAll();
     }
 
     @Get(':id/liked')
-    @UseInterceptors(ClassSerializerInterceptor)
     @ApiOperation({ title: '查询用户喜欢/投票的 posts' })
     async liked(@Param('id') id:string) {
         return this.userService.liked(id);
