@@ -11,6 +11,7 @@ import { DemoRolesGuard } from './core/guards/demo-roles.guard';
 import { DemoAuthGuard } from './core/guards/demo-auth.guard';
 import { CategoryModule } from './modules/category/category.module';
 import { TagModule } from './modules/tag/tag.module';
+import { CommentModule } from './modules/comment/comment.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -27,7 +28,8 @@ import { TagModule } from './modules/tag/tag.module';
     AuthModule,
     PostModule,
     CategoryModule,
-    TagModule
+    TagModule,
+    CommentModule
   ],
   controllers: [],
   providers: [

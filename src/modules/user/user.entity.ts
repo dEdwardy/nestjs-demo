@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, OneToMany, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Exclude } from 'class-transformer'
 import { Post } from '../post/post.entity';
+import { Comment } from '../comment/comment.entity';
 @Entity()
 export class User {
     @PrimaryGeneratedColumn('uuid', { comment: '主键' })
@@ -30,6 +31,9 @@ export class User {
     @ManyToMany(type => Post, post => post.liked)
     @JoinTable()
     voted: Post[]
+
+    @OneToMany(type => Comment, comment => comment.user)
+    comments: Comment[];
 
     async comparePwd(pwd: string) {
         return pwd === this.password;
