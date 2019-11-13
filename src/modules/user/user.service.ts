@@ -9,12 +9,7 @@ export class UserService {
 
     }
     async addUser(dto: userDto): Promise<any> {
-        const { username, password, email } = dto;
-        let user = new UserEntity();
-        user.username = username;
-        user.password = password;
-        user.email = email;
-        return await this.userReposity.save(user);
+        return await this.userReposity.save(dto);
     }
     deleteUser(id: string): Promise<DeleteResult> {
         return this.userReposity.delete({ id });
