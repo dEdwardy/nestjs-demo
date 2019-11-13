@@ -48,9 +48,10 @@ export class PostController {
     }
 
     @Put(':id')
+    @UseGuards(AuthGuard('jwt'))
     @ApiOperation({ title: '修改post' })
-    updatePost(@Param('id') id:string, data:postDto){
-        console.log(data)
+    updatePost(@Param('id') id:string, @Body() data:postDto){
+        console.log({data})
         return this.postService.updatePost(id, data)
     }
 
