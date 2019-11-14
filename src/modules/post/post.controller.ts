@@ -21,7 +21,7 @@ export class PostController {
     @ApiOperation({ title: '添加post' })
     @UseGuards(AuthGuard('jwt'))
     addPost(@Body() data:postDto,@User() user:UserEntity){
-        console.log(user)
+        console.log({user})
         return this.postService.addPost(data, user)
     }
     

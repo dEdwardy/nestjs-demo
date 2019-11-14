@@ -18,8 +18,10 @@ export class CommentController {
         @Req() req,
         @Body() data:CommentDto,
         @User() user: UserEntity){
+            console.log('00000000000000')
             console.log({user})
             console.log(req.user)
+            console.log('00000000000000');
             return await this.commentService.storePostComment(id, req.user, data)
     }
 

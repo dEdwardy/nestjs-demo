@@ -11,7 +11,7 @@ export class DemoAuthGuard implements CanActivate {
     req.user = {
       roles:['guests']
     }
-    console.log('I m a guard 1')
+    // console.log('I m a guard 1')
     return true;
   }
 }
