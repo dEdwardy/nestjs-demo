@@ -11,7 +11,7 @@ export class User {
     username: string;
 
     @Exclude()
-    @Column({ comment: '密码', length: 50 })
+    @Column({ comment: '密码', length: 50, select: false })
     password: string;
 
     @Exclude()
