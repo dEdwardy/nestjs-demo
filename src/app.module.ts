@@ -23,6 +23,7 @@ import { CommentModule } from './modules/comment/comment.module';
       database: 'nestjs',
       entities: ["dist/**/*.entity{.ts,.js}"],
       synchronize: true,
+      logging:true
     }),
     UserModule,
     AuthModule,

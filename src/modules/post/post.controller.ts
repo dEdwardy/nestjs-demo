@@ -57,7 +57,7 @@ export class PostController {
 
     @Get()
     @ApiOperation({ title: '查询所有post'})
-    getAll(@ListOptions() options:ListOptionsInterface){
+    getAll(@ListOptions({limit:10}) options:ListOptionsInterface){
         return this.postService.getAll(options)
     }
 

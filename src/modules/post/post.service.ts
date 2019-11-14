@@ -71,8 +71,8 @@ export class PostService {
                         .of(id)
                         .loadMany();
     }
-    deletePost(id:string){
-        return this.postRepository.delete(id)
+    async deletePost(id:string){
+        return await this.postRepository.delete(id)
     } 
     async updatePost(id:string, data:postDto){
         console.log({data})
@@ -90,7 +90,7 @@ export class PostService {
         // return this.postRepository.find({
         //     relations:['user','category']
         // })
-        const { categories, tags } = options;
+        const { categories, tags, limit, page } = options;
         const queryBuilder = await this.postRepository
             .createQueryBuilder('post');
         queryBuilder.leftJoinAndSelect('post.user', 'user');
@@ -103,8 +103,14 @@ export class PostService {
         if(tags){
             queryBuilder.andWhere('tag.alias IN (:...tags)',{ tags });
         }
-        const entities = queryBuilder.getMany();
-        return entities;
+        queryBuilder
+            .take(limit)
+            .skip(limit * (page -1));
+        queryBuilder.orderBy({
+            'post.created':'DESC'
+        })
+        const entities = await queryBuilder.getManyAndCount();
+        return { data:entities[0], total:entities[1] };
     }
     getOne(id:string){
         return this.postRepository.find({ id })
