@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, UseInterceptors, ClassSerializerInterceptor, Param, Body, Req } from '@nestjs/common';
+import { Controller, Post, UseGuards, UseInterceptors, ClassSerializerInterceptor, Param, Body } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { AuthGuard } from '@nestjs/passport';
 import { CommentDto } from './comment.dto';
@@ -15,14 +15,9 @@ export class CommentController {
     @UseInterceptors(ClassSerializerInterceptor)
     async storePostComment(
         @Param('id') id:string,
-        @Req() req,
         @Body() data:CommentDto,
         @User() user: UserEntity){
-            console.log('00000000000000')
-            console.log({user})
-            console.log(req.user)
-            console.log('00000000000000');
-            return await this.commentService.storePostComment(id, req.user, data)
+            return await this.commentService.storePostComment(id, user, data)
     }
 
 }
