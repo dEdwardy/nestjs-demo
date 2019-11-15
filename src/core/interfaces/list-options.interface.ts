@@ -4,10 +4,10 @@ export interface ListOptionsInterface {
     limit:number;
     page:number;
     sort:string;
-    order:Order.A | Order.D;
+    order:Order.ASC | Order.DESC;
 }
 
 export const enum Order{
-    A = 'ASC',
-    D = 'DESC'
+    ASC = 'ASC',
+    DESC = 'DESC'
 }

@@ -2,8 +2,6 @@ import { createParamDecorator } from '@nestjs/common'
 import { ListOptionsInterface, Order } from '../interfaces/list-options.interface';
 export const ListOptions = createParamDecorator((data: Partial<ListOptionsInterface> = { },req) => {
     let { categories, tags, limit, page, sort, order }= req.query;
-    console.log(typeof categories)
-    console.log(!!categories)
     if(categories){
         categories = categories.split('-')
     }
@@ -33,9 +31,9 @@ export const ListOptions = createParamDecorator((data: Partial<ListOptionsInterf
     }
 
     if(order) {
-        order = order.toUpperCase();
+        order = order.toUpperCase()==Order.DESC ? Order.DESC : Order.ASC;
     }else {
-        order = 'DESC';
+        order = Order.DESC;
     }
     return { categories, tags, limit, page }
 
