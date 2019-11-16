@@ -14,6 +14,7 @@ import { TagModule } from './modules/tag/tag.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { RoleModule } from './modules/role/role.module';
 import { AccessGuard } from './core/guards/access.guard';
+import { FileModule } from './modules/file/file.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -32,7 +33,8 @@ import { AccessGuard } from './core/guards/access.guard';
     CategoryModule,
     TagModule,
     CommentModule,
-    RoleModule
+    RoleModule,
+    FileModule
   ],
   controllers: [],
   providers: [
