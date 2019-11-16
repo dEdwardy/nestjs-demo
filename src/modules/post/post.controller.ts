@@ -12,6 +12,7 @@ import { Permissions } from '../../core/decorators/permissions.decorator';
 import { Resource } from '../../core/interfaces/enums/resource.enum';
 import { Possession } from '../../core/interfaces/enums/possession.enum';
 import { UserService } from '../user/user.service';
+import { UserRole } from '../../core/interfaces/enums/user-role.enum';
 
 @ApiUseTags('Posts')
 @Controller('posts')
@@ -53,8 +54,8 @@ export class PostController {
     }
 
     @Put(':id')
-    @UseGuards(AuthGuard('jwt'))
-    // @Permissions({ resource: Resource.POST, possession: Possession.OWN})
+    @UseGuards(AuthGuard('jwt'),AccessGuard)
+    @Permissions({ resource: Resource.POST, possession: Possession.OWN,role: UserRole.VIP})
     @ApiOperation({ title: '修改post' })
     updatePost(@Param('id') id:string, @Body() data:postDto){
         console.log({data})
