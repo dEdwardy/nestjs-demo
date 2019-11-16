@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm'
-import  { UserModule } from './modules/user/user.module'
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserModule } from './modules/user/user.module';
 import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
 import { LoggingInterceptor } from './core/interceptors/logging.interceptor';
 import { TransformInterceptor } from './core/interceptors/transform.interceptor';
@@ -13,7 +13,6 @@ import { CategoryModule } from './modules/category/category.module';
 import { TagModule } from './modules/tag/tag.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { RoleModule } from './modules/role/role.module';
-import { AccessGuard } from './core/guards/access.guard';
 import { FileModule } from './modules/file/file.module';
 @Module({
   imports: [
@@ -24,7 +23,7 @@ import { FileModule } from './modules/file/file.module';
       username: 'root',
       password: 'root',
       database: 'nestjs',
-      entities: ["dist/**/*.entity{.ts,.js}"],
+      entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true
     }),
     UserModule,
