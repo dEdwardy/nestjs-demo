@@ -7,6 +7,11 @@ import { User } from '../../core/decorators/user.decorator';
 import { User as UserEntity } from '../user/user.entity';
 import { ListOptions } from '../../core/decorators/list-options.decorator';
 import { ListOptionsInterface } from '../../core/interfaces/list-options.interface';
+import { AccessGuard } from '../../core/guards/access.guard';
+import { Permissions } from '../../core/decorators/permissions.decorator';
+import { Resource } from '../../core/interfaces/enums/resource.enum';
+import { Possession } from '../../core/interfaces/enums/possession.enum';
+import { UserService } from '../user/user.service';
 
 @ApiUseTags('Posts')
 @Controller('posts')
@@ -49,6 +54,7 @@ export class PostController {
 
     @Put(':id')
     @UseGuards(AuthGuard('jwt'))
+    // @Permissions({ resource: Resource.POST, possession: Possession.OWN})
     @ApiOperation({ title: '修改post' })
     updatePost(@Param('id') id:string, @Body() data:postDto){
         console.log({data})

@@ -12,6 +12,8 @@ import { DemoAuthGuard } from './core/guards/demo-auth.guard';
 import { CategoryModule } from './modules/category/category.module';
 import { TagModule } from './modules/tag/tag.module';
 import { CommentModule } from './modules/comment/comment.module';
+import { RoleModule } from './modules/role/role.module';
+import { AccessGuard } from './core/guards/access.guard';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -22,15 +24,15 @@ import { CommentModule } from './modules/comment/comment.module';
       password: 'root',
       database: 'nestjs',
       entities: ["dist/**/*.entity{.ts,.js}"],
-      synchronize: true,
-      logging:true
+      synchronize: true
     }),
     UserModule,
     AuthModule,
     PostModule,
     CategoryModule,
     TagModule,
-    CommentModule
+    CommentModule,
+    RoleModule
   ],
   controllers: [],
   providers: [

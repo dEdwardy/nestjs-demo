@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, OneToMany, ManyTo
 import { Exclude } from 'class-transformer'
 import { Post } from '../post/post.entity';
 import { Comment } from '../comment/comment.entity';
+import { Role } from '../role/role.entity';
 @Entity()
 export class User {
     @PrimaryGeneratedColumn('uuid', { comment: '主键' })
@@ -11,7 +12,7 @@ export class User {
     username: string;
 
     @Exclude()
-    @Column({ comment: '密码', length: 50, select: false })
+    @Column({ comment: '密码', length: 50 })
     password: string;
 
     @Exclude()
@@ -30,13 +31,17 @@ export class User {
     //中间表 多对多
     @ManyToMany(type => Post, post => post.liked)
     @JoinTable()
-    voted: Post[]
+    voted: Post[];
+
+    @ManyToMany(type => Role, role => role.users)
+    @JoinTable()
+    roles: Role[];
 
     @OneToMany(type => Comment, comment => comment.user)
     comments: Comment[];
 
     async comparePwd(pwd: string) {
-        return pwd === this.password;
+        return pwd == this.password;
     }
 
 }
