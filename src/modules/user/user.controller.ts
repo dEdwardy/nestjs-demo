@@ -42,7 +42,7 @@ export class UserController {
     
     @Put(':id/role')
     @Permissions({ role: UserRole.ADMIN})
-    @UseGuards(AuthGuard('jwt'),AccessGuard)
+    @UseGuards(AuthGuard(),AccessGuard)
     @ApiOperation({ title: '修改用户角色' })
     async update(
         @Param('id') id:string,
