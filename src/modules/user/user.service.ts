@@ -9,19 +9,18 @@ export class UserService {
 
     }
     async addUser(dto: userDto): Promise<any> {
-        return await this.userReposity.save(dto);
+        // console.log(dto)
+        const { username, password, email } = dto;
+        const entity = this.userReposity.create({
+            username,
+            password,
+            email
+        })
+        return await this.userReposity.save(entity);
     }
     deleteUser(id: string): Promise<DeleteResult> {
         return this.userReposity.delete({ id });
     }
-    // async updateUser(id: string, dto: Partial<userDto>): Promise<UpdateResult> {
-
-    //     let user = new UserEntity();
-    //     user.username = dto.username;
-    //     user.password = dto.password;
-    //     user.email = dto.email;
-    //     return await this.userReposity.update(user, { id })
-    // }
     async updatePwd(id:string, data:updatePwdDto){
         const { password, newPassword } = data;
         const entity = await this.userReposity.findOne(id);
@@ -61,5 +60,12 @@ export class UserService {
     async liked(id:string){
         return this.userReposity.findOne(id,{ relations: ['voted','voted.user']})
     }
-
+    async updateRole(id:string, user:userDto){
+        const { roles } = user;
+        const entity = await this.userReposity.findOne(id);
+        if(roles){
+            entity.roles =roles;
+        }
+        return this.userReposity.save(entity)
+    }
 }

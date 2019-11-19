@@ -19,7 +19,7 @@ export class PostController {
     }
     @Post()
     @ApiOperation({ title: '添加post' })
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(AuthGuard())
     addPost(@Body() data:postDto,@User() user:UserEntity){
         console.log({user})
         return this.postService.addPost(data, user)
@@ -27,7 +27,7 @@ export class PostController {
     
     @Post(':id/vote')
     @ApiOperation({ title: '用户给post(帖子) 投票/喜欢/点赞等' })
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(AuthGuard())
     async vote(@Param('id') id:string,@User() user:UserEntity){
         console.log(user)
         return this.postService.vote(id, user)
@@ -35,20 +35,21 @@ export class PostController {
 
     @Delete(':id/unvote')
     @ApiOperation({ title: '用户给post(帖子) 取消 投票/喜欢/点赞等' })
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(AuthGuard())
     async unVote(@Param('id') id:string,@User() user:UserEntity){
         console.log(user)
         return this.postService.unVote(id, user)
     }
 
     @Delete(':id')
+    @UseGuards(AuthGuard())
     @ApiOperation({ title: '根据Id删除post' })
     deletePost(@Param('id') id:string){
         return this.postService.deletePost(id)
     }
 
     @Put(':id')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(AuthGuard())
     @ApiOperation({ title: '修改post' })
     updatePost(@Param('id') id:string, @Body() data:postDto){
         console.log({data})

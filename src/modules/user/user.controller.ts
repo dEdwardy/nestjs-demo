@@ -30,7 +30,7 @@ export class UserController {
         return this.userService.deleteUser(id);
     }
     
-    @Put(':id')
+    @Put(':id/changePwd')
     @ApiOperation({ title: '修改用户密码' })
     updateUser(@Param('id') id: string,@Body() data:updatePwdDto) {
         return this.userService.updatePwd(id, data);
@@ -52,5 +52,13 @@ export class UserController {
     @ApiOperation({ title: '查询用户喜欢/投票的 posts' })
     async liked(@Param('id') id:string) {
         return this.userService.liked(id);
+    }
+
+    @Put(':id/changeRole')
+    async updateRole(
+        @Param('id') id:string,
+        @Body() data: userDto
+    ){
+        return await this.userService.updateRole(id ,data);
     }
 }

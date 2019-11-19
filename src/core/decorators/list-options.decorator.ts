@@ -27,11 +27,11 @@ export const ListOptions = createParamDecorator((data: Partial<ListOptionsInterf
     if(sort) {
         sort = sort;
     }else {
-        sort = 'created';
+        sort = data.sort ||'created';
     }
 
     if(order) {
-        order = order.toUpperCase()==Order.DESC ? Order.DESC : Order.ASC;
+        order = order.toUpperCase()==Order.ASC ? Order.ASC : Order.DESC;
     }else {
         order = Order.DESC;
     }
