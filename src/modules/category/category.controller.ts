@@ -1,10 +1,11 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, ClassSerializerInterceptor, UseInterceptors } from '@nestjs/common';
 import { categoryDto } from './category.dto';
 import { CategoryService } from './category.service';
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
 
 @Controller('categorys')
 @ApiUseTags('分类')
+@UseInterceptors(ClassSerializerInterceptor)
 export class CategoryController {
     constructor(
         private readonly categoryService: CategoryService

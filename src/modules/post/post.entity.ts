@@ -3,6 +3,7 @@ import { User } from '../user/user.entity';
 import { Category } from '../category/category.entity';
 import { Tag } from '../tag/tag.entity';
 import { Comment } from '../comment/comment.entity'
+import { Exclude } from 'class-transformer';
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn('uuid')
@@ -20,7 +21,7 @@ export class Post {
     @UpdateDateColumn({ comment: '修改日期' })
     updated: Date;
 
-
+    
     @ManyToOne(type => User, user =>user.posts)
     user:User;
 

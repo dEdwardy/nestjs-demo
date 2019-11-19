@@ -54,18 +54,41 @@ export class UserService {
         return await this.userReposity.findOne({ email: email });
     }
 
-    async findByName(username: string): Promise<any> {
-        return await this.userReposity.findOne({ username });
+    async findByName(username: string, password?:boolean): Promise<any> {
+        const queryBuilder = await this.userReposity
+            .createQueryBuilder('user');
+        queryBuilder
+            .where('user.username = :username', { username})
+            .leftJoinAndSelect('user.roles','roles')
+
+        if(password){
+            queryBuilder.addSelect('user.password')
+        }
+        const entity = await queryBuilder.getOne();
+        return entity;
     }
     async liked(id:string){
         return this.userReposity.findOne(id,{ relations: ['voted','voted.user']})
     }
-    async updateRole(id:string, user:userDto){
-        const { roles } = user;
+    async update(id:string, data:userDto){
+        const { roles } = data;
         const entity = await this.userReposity.findOne(id);
-        if(roles){
-            entity.roles =roles;
+        if(roles) {
+            entity.roles = roles;
         }
-        return this.userReposity.save(entity)
+        return await this.userReposity.save(entity);
+    }
+    async possess(
+        id:string,
+        resource:string,
+        resourceId:string 
+        ){
+         const result = await this.userReposity
+            .createQueryBuilder('user')
+            .where('user.id= :id',{ id })
+            .leftJoin(`user.${resource}`,resource)
+            .andWhere(`${resource}.id = :resourceId`, { resourceId })
+            .getCount();
+        return result ===1 ? true : false;   
     }
 }

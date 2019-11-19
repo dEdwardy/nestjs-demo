@@ -1,7 +1,11 @@
-import { Controller, Get, Param, Query, Post, Body, Delete, Put, UseInterceptors, ClassSerializerInterceptor, SetMetadata } from '@nestjs/common';
+import { Controller, Get, Param, Query, Post, Body, Delete, Put, UseInterceptors, ClassSerializerInterceptor, SetMetadata, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { UserService } from './user.service'
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { userDto, updatePwdDto } from './user.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { Permissions } from '../../core/decorators/permissions.decorator';
+import { UserRole } from '../../core/interfaces/enums/user-role.enum';
+import { AccessGuard } from '../../core/guards/access.guard';
 
 @Controller('users')
 @ApiUseTags('用户')
@@ -36,6 +40,17 @@ export class UserController {
         return this.userService.updatePwd(id, data);
     }
     
+    @Put(':id/role')
+    @Permissions({ role: UserRole.ADMIN})
+    @UseGuards(AuthGuard(),AccessGuard)
+    @ApiOperation({ title: '修改用户角色' })
+    async update(
+        @Param('id') id:string,
+        @Body() data: userDto
+    ){
+        return await this.userService.update(id,data);
+    }
+
     @Get(':id')
     @ApiOperation({ title: '根据ID查询用户' })
     getUser(@Param('id') id: string): Promise<any> {
@@ -54,11 +69,12 @@ export class UserController {
         return this.userService.liked(id);
     }
 
-    @Put(':id/changeRole')
-    async updateRole(
+    @Get(':id/possess/:resource/:resourceId')
+    async possess(
         @Param('id') id:string,
-        @Body() data: userDto
+        @Param('resource') resource:string,
+        @Param('resourceId') resourceId:string,
     ){
-        return await this.userService.updateRole(id ,data);
+        return this.userService.possess(id, resource, resourceId)
     }
 }

@@ -1,10 +1,11 @@
-import { Controller, Post, Body, Put, Param, ParseIntPipe, Delete, Get } from '@nestjs/common';
+import { Controller, Post, Body, Put, Param, ParseIntPipe, Delete, Get, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { ApiUseTags } from '@nestjs/swagger';
 import { TagService } from './tag.service';
 import { TagDto } from './tag.dto';
 
 @Controller('tags')
 @ApiUseTags('Tags')
+@UseInterceptors(ClassSerializerInterceptor)
 export class TagController {
     constructor(
         private readonly tagService: TagService

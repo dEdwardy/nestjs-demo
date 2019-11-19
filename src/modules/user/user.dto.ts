@@ -17,8 +17,8 @@ export class userDto {
     readonly email: string;
     
     @ApiModelProperty({ description:'角色'})
-    readonly roles:Role[];
-}
+    readonly roles: Role[];
+}   
 export class updatePwdDto {
 
     @ApiModelProperty({ description:'旧密码' })
