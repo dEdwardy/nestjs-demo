@@ -12,7 +12,7 @@ export class AuthService {
     ){ }
     async login(data:LoginDto){
         const { username, password } = data;
-        const entity = await this.userService.findByName(username);
+        const entity = await this.userService.findByName(username,true);
         console.log(entity)
         if(!entity){
             throw new UnauthorizedException('用户名不存在');

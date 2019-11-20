@@ -11,8 +11,8 @@ export class User {
     @Column({ comment: '用户名', length: 50, unique: true })
     username: string;
 
-    @Exclude({ toPlainOnly: true })
-    @Column({ comment: '密码', length: 50 })
+    @Exclude()
+    @Column({ comment: '密码', length: 50, select: false})
     password: string;
 
     @Column({ comment: '邮箱', length: 50, unique: true,select: false })
