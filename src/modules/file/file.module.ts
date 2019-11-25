@@ -10,18 +10,18 @@ import { File } from './file.entity'
     TypeOrmModule.forFeature([File]),
     MulterModule.register({
       dest: './uploads',
-      fileFilter:(req,file,callback) => {
-        const mimetypes = [
-          'image/png',
-          'image/jpg'
-        ];
-        const allowed = mimetypes.some(type => type === file.mimetype);
-        if(allowed){
-          callback(null, true)
-        }else {
-          callback(new BadRequestException('不支持上传此类型的文件。'), false)
-        }
-      }
+      // fileFilter:(req,file,callback) => {
+      //   const mimetypes = [
+      //     'image/png',
+      //     'image/jpg'
+      //   ];
+      //   const allowed = mimetypes.some(type => type === file.mimetype);
+      //   if(allowed){
+      //     callback(null, true)
+      //   }else {
+      //     callback(new BadRequestException('不支持上传此类型的文件。'), false)
+      //   }
+      // }
     })
   ],
   controllers: [FileController],

@@ -14,6 +14,7 @@ import { TagModule } from './modules/tag/tag.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { RoleModule } from './modules/role/role.module';
 import { FileModule } from './modules/file/file.module';
+import { SocketModule } from './modules/socket/socket.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -33,7 +34,8 @@ import { FileModule } from './modules/file/file.module';
     TagModule,
     CommentModule,
     RoleModule,
-    FileModule
+    FileModule,
+    SocketModule
   ],
   controllers: [],
   providers: [

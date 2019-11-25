@@ -57,6 +57,12 @@ export class UserController {
         return this.userService.findUserById(id);
     }
 
+    @Get(':username')
+    @ApiOperation({ title: '根据Username查询用户' })
+    getUserByName(@Param('username') username: string): Promise<any> {
+        return this.userService.findByName(username);
+    }
+
     @Get()
     @ApiOperation({ title: '查询所有用户' })
     getAll() {

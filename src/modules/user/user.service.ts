@@ -59,10 +59,10 @@ export class UserService {
             .createQueryBuilder('user');
         queryBuilder
             .where('user.username = :username', { username})
-            .leftJoinAndSelect('user.roles','roles')
 
         if(password){
-            queryBuilder.addSelect('user.password')
+            queryBuilder.leftJoinAndSelect('user.roles','roles')
+                .addSelect('user.password')
         }
         const entity = await queryBuilder.getOne();
         return entity;

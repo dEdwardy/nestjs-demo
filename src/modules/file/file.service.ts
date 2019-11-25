@@ -13,7 +13,7 @@ export class FileService {
     async store(data:FileDto){
          return await this.fileRepository.save(data);
     }
-    async show(id:number) {
+    async show(id:string) {
         return await this.fileRepository.findOne(id);
     }
 }

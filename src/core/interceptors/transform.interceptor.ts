@@ -1,10 +1,10 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor, HttpStatus } from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor, HttpStatus, HttpCode } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators'
 
 export interface Response<T> {
   data: T,
-  status: HttpStatus
+  statusCode: HttpStatus
 }
 
 
@@ -15,7 +15,7 @@ export class TransformInterceptor implements NestInterceptor {
     return next
       .handle()
       .pipe(
-        map(data => ({ data }))
+        map(data => ({ data,status:200 }))
       )
   }
 }
