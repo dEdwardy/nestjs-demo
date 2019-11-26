@@ -1,14 +1,27 @@
-import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayInit } from '@nestjs/websockets';
 import { UserService } from '../user/user.service';
-import { UserStatus } from 'src/core/interfaces/enums/user-status.enum';
+import { UserStatus } from '../../core/interfaces/enums/user-status.enum';
+import { RedisService } from 'nestjs-redis';
 
 let num = 0;
 @WebSocketGateway()
-export class SocketGateway {
-  constructor(private userService: UserService){}
+export class SocketGateway implements OnGatewayInit{
+  constructor(
+    private userService: UserService,
+    private redisService: RedisService
+    ){}
+  afterInit(server) {
+    console.log(server)
+  } 
+  handleConnection(client) {
+    // console.log('ClientId:'+client.id+'进入')
+  } 
+  handleDisconnect(client) {
+    // console.log('ClientId:'+client.id+'离开')
+  }
+
   users = [];
-  @WebSocketServer()
-  server;
+  @WebSocketServer() server;
   @SubscribeMessage('message')
   handleMessage(client: any, payload: any) {
     num++;
@@ -33,21 +46,39 @@ export class SocketGateway {
     };
   }
   
+  userMap = new Map();
   @SubscribeMessage('login')
-  handleLogin(client, payload){
-    console.log(`ClienID:${client.id}--登录成功`)
-    this.users.push({
-      id:client.id,
-      status: UserStatus.ONLINE
+  async handleLogin(client, payload){
+    let id = payload.id;
+    this.userMap.set(id,client.id);
+    // this.users.push({
+    //   socketId:client.id,
+    //   id
+    // });
+    //获取id 的 friends ids 
+    let friendsIds = await this.redisService.getClient().smembers(id);
+    let online= [];
+    friendsIds.map(item => {
+      if(this.userMap.has(item)){
+        online.push({ id:item, socketId: this.userMap.get(item)})
+      }
     })
+    console.log(`SocketID:${client.id},ID:${payload.id}--登录成功`)
+    
     client.on('disconnect', () => {
-      let idx = this.users.findIndex((value, index, arr) => {
-        return value.id ==client.id
-      })
-      this.users.splice(0,idx)
-      console.log(`SocketID:${client.id}--退出成功`)
-      console.log(this.users)
+      this.userMap.delete(id);
+      // let idx = this.users.findIndex((item, index, arr) => {
+      //   return item.socketId == client.id
+      // })
+      // this.users.splice(0,idx)
+      console.log(`SocketID:${client.id},ID:${payload.id}--退出成功`)
+      // console.log(this.users)
     })
-    return false;
+    return {
+      event:"online",
+      payload:{
+        online
+      }
+    };
   }
 }

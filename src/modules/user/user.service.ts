@@ -3,9 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getRepository, DeleteResult, UpdateResult } from 'typeorm';
 import { User as UserEntity } from './user.entity'
 import { userDto, updatePwdDto } from './user.dto'
+import { RedisService } from 'nestjs-redis';
 @Injectable()
 export class UserService {
-    constructor(@InjectRepository(UserEntity) private readonly userReposity: Repository<UserEntity>) {
+    constructor(
+        @InjectRepository(UserEntity) private readonly userReposity: Repository<UserEntity>,
+        private readonly redisService: RedisService
+        ) {
 
     }
     async addUser(dto: userDto): Promise<any> {
@@ -16,7 +20,10 @@ export class UserService {
             password,
             email
         })
-        return await this.userReposity.save(entity);
+        const data = await this.userReposity.save(entity);
+        const redis = await this.redisService.getClient();
+        await redis.sadd('users',data.id)
+        return data;
     }
     deleteUser(id: string): Promise<DeleteResult> {
         return this.userReposity.delete({ id });
@@ -47,8 +54,13 @@ export class UserService {
         };
         return await this.userReposity.findOne(findOneOptions, { relations:['posts'] });
     }
-    findUserById(id: string): Promise<UserEntity> {
-        return this.userReposity.findOne(id)
+    findUserById(id:string | Array<string>) {
+        if(typeof id == 'string'){
+            return this.userReposity.findOne(id)
+        }else{
+            return this.userReposity.findByIds(id)
+        }
+        
     }
     async findByEmail(email: string): Promise<any> {
         return await this.userReposity.findOne({ email: email });

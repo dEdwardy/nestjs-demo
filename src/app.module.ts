@@ -15,6 +15,7 @@ import { CommentModule } from './modules/comment/comment.module';
 import { RoleModule } from './modules/role/role.module';
 import { FileModule } from './modules/file/file.module';
 import { SocketModule } from './modules/socket/socket.module';
+import { FriendModule } from './modules/friend/friend.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -35,7 +36,8 @@ import { SocketModule } from './modules/socket/socket.module';
     CommentModule,
     RoleModule,
     FileModule,
-    SocketModule
+    SocketModule,
+    FriendModule
   ],
   controllers: [],
   providers: [
