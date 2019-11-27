@@ -120,7 +120,7 @@ export class SocketGateway implements OnGatewayInit {
       to: toSocketId,
       message: payload.message
     })
-    await client.to(toSocketId).emit('chat_to', { from: payload.from, to:payload.to, message: payload.message });
+    await client.to(toSocketId).emit('chat_to', { from: payload.from, to:payload.to, message: payload.message, date:Date.now(), type:'chat' });
     return {
       event:'chat_status',
       data:'ok'
