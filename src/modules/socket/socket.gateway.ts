@@ -3,6 +3,8 @@ import { UserService } from '../user/user.service';
 import { UserStatus } from '../../core/interfaces/enums/user-status.enum';
 import { RedisService } from 'nestjs-redis';
 import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
+import { Message } from '../../core/interfaces/message.interface';
+import { MessageType } from '../../core/interfaces/enums/message.enum';
 
 let num = 0;
 @WebSocketGateway()
@@ -120,10 +122,11 @@ export class SocketGateway implements OnGatewayInit {
       to: toSocketId,
       message: payload.message
     })
-    await client.to(toSocketId).emit('chat_to', { from: payload.from, to:payload.to, message: payload.message, date:Date.now(), type:'chat' });
+    let message:Message = { from: payload.from, to:payload.to, message: payload.message, date:new Date(), type:MessageType.CHAT, unread: true}
+    await client.to(toSocketId).emit('chat_to', message);
     return {
       event:'chat_status',
-      data:'ok'
+      data:true
     };
   }
 }
