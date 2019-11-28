@@ -51,13 +51,13 @@ export class UserController {
         return await this.userService.update(id,data);
     }
 
-    @Get(':id')
+    @Get('id/:id')
     @ApiOperation({ title: '根据ID查询用户' })
     getUser(@Param('id') id: string): Promise<any> {
         return this.userService.findUserById(id);
     }
 
-    @Get(':username')
+    @Get('username/:username')
     @ApiOperation({ title: '根据Username查询用户' })
     getUserByName(@Param('username') username: string): Promise<any> {
         return this.userService.findByName(username);
