@@ -87,9 +87,6 @@ export class PostService {
         return await this.postRepository.save(entity);
     }
     async getAll(options:ListOptionsInterface){
-        // return this.postRepository.find({
-        //     relations:['user','category']
-        // })
         const { categories, tags, limit, page } = options;
         const queryBuilder = await this.postRepository
             .createQueryBuilder('post');
@@ -112,7 +109,16 @@ export class PostService {
         const entities = await queryBuilder.getManyAndCount();
         return { data:entities[0], total:entities[1] };
     }
-    getOne(id:string){
-        return this.postRepository.find({ id })
+    async getOne(id:string){
+        const queryBuilder = await this.postRepository
+            .createQueryBuilder('post');
+        queryBuilder.where('post.id = :id',{ id})
+        queryBuilder.leftJoinAndSelect('post.user', 'user');
+        queryBuilder.leftJoinAndSelect('post.category', 'category');
+        queryBuilder.leftJoinAndSelect('post.tags', 'tag');
+
+        let data =await queryBuilder.getOne();
+        // let [ { ...data } ] =await this.postRepository.find({ id });
+        return data;
     }
 }

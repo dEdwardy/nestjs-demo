@@ -1,3 +1,4 @@
 export enum MessageType {
-  CHAT = 'chat'
+  CHAT = 'chat',
+  ADD_FRIENDS = 'add_friends'
 }

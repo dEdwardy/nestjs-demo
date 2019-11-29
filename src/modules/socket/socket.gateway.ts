@@ -13,6 +13,8 @@ export class SocketGateway implements OnGatewayInit {
     private userService: UserService,
     private redisService: RedisService
   ) { }
+  userMap = new Map();
+  onlineMap = new Map();
   afterInit(server) {
     // console.log(server)
   }
@@ -26,31 +28,21 @@ export class SocketGateway implements OnGatewayInit {
   @WebSocketServer() server;
 
   @SubscribeMessage('message')
-  handleMessage(client: any, payload: any) {
-    num++;
-    // console.log(payload.name+'进来了---总人数：'+num);
-    console.log(`SocketID:${client.id}--${payload.name}进来了`)
-    // client.broadcast.emit('message',{
-    //   returnVal:payload.name+'进入房间'
-    // })
-    client.broadcast.emit('message', {
-      returnVal: payload.name + '：' + payload.message
-    })
-    client.on('disconnect', () => {
-      num--;
-      console.log(`SocketID:${client.id}--${payload.name}离开了`)
-    })
+  async handleMessage(client: any, payload: any) {
     console.log(payload)
-    return {
-      event: 'message',
-      data: {
-        returnVal: payload.name + '：' + payload.message
-      }
-    };
+    //判断消息接收者是否在线，在线则发送通知，不在则存储到redis中
+    if(this.userMap.has(payload.to)){
+      //online
+      let socketId = this.userMap.get(payload.to)
+      client.to(socketId).emit('messages',{...payload,date:new Date(), type:MessageType.ADD_FRIENDS, unread: true});
+    }else{
+      //offline
+      let id = payload.to;
+      //redis中存储了好友关系 所以消息key前添加'messages_'以区分
+      await this.redisService.getClient().sadd('messages_'+id,JSON.stringify({...payload,date:new Date(), type:MessageType.ADD_FRIENDS, unread: true}))
+    }
+    return false;
   }
-
-  userMap = new Map();
-  onlineMap = new Map();
 
   @SubscribeMessage('login')
   async handleLogin(client, payload) {
@@ -60,16 +52,25 @@ export class SocketGateway implements OnGatewayInit {
     let friendsIds = await this.redisService.getClient().smembers(id);
     //用户(id)的在线好友
     let online = [];
-    friendsIds.map(item => {
-      if (this.userMap.has(item)) {
-        // this.onlineMap.set(item,this.userMap.get(item))
-        online.push({ id: item, socketId: this.userMap.get(item) })
-      }
-    })
+    if(friendsIds.length>0){
+      friendsIds.map(item => {
+        if (this.userMap.has(item)) {
+          // this.onlineMap.set(item,this.userMap.get(item))
+          online.push({ id: item, socketId: this.userMap.get(item) })
+        }
+      })
+    }
+
+    //查询是否存在未读消息(即离线期间的消息)
+    let redis = await this.redisService.getClient()
+    let res = await redis.exists('messages_'+id)
+    let messages;
+    if(res ===1 ){
+      messages =  await redis.smembers('messages_'+id)
+    }
     //如果好友在线 则通知好友我已经上线
     if (online && online.length > 0) {
       for (let item of online) {
-        // client.to(item.socketId).emit('friends-on',{ id, socketId: client.id})
         let refreshFriendsList = await this.getOnlineFriendsList(item.id);
         client.to(item.socketId).emit('friends_fresh', refreshFriendsList)
       }
@@ -80,12 +81,13 @@ export class SocketGateway implements OnGatewayInit {
       console.log(`SocketID:${client.id},ID:${payload.id}--即将退出....`)
       this.userMap.delete(id);
       let online2 = [];
-      friendsIds.map(item => {
-        if (this.userMap.has(item)) {
-          // this.onlineMap.set(item,this.userMap.get(item))
-          online2.push({ id: item, socketId: this.userMap.get(item) })
-        }
-      })
+      if(friendsIds.length>0) {
+        friendsIds.map(item => {
+          if (this.userMap.has(item)) {
+            online2.push({ id: item, socketId: this.userMap.get(item) })
+          }
+        })
+      }
       if (online2 && online2.length > 0) {
         for (let item of online2) {
           let refreshFriendsList = await this.getOnlineFriendsList(item.id);
@@ -96,7 +98,10 @@ export class SocketGateway implements OnGatewayInit {
     })
     return {
       event: "online",
-      data: online
+      data: {
+        online:online? online:[],
+        messages: messages? messages:[]
+      }
     };
   }
 
