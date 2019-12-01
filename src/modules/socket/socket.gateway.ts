@@ -28,7 +28,7 @@ export class SocketGateway implements OnGatewayInit {
   @WebSocketServer() server;
 
   @SubscribeMessage('message')
-  async handleMessage(client: any, payload: any) {
+  async message(client: any, payload: any) {
     console.log(payload)
     //判断消息接收者是否在线，在线则发送通知，不在则存储到redis中
     if(this.userMap.has(payload.to)){
@@ -42,6 +42,24 @@ export class SocketGateway implements OnGatewayInit {
       await this.redisService.getClient().sadd('messages_'+id,JSON.stringify({...payload,date:new Date(), type:MessageType.ADD_FRIENDS, unread: true}))
     }
     return false;
+  }
+  
+  @SubscribeMessage('handle_add_friend')
+  async handleMessage(client, payload){
+    console.log(payload)
+    let  redis = this.redisService.getClient();
+    if(payload.accept) {  
+      //accept
+      await redis.sadd(payload.to,payload.from);
+      await redis.sadd(payload.from,payload.to);
+    }
+    await redis.del('messages_'+payload.to);
+    return {
+      event: 'message',
+      data: {
+        status: payload.accept ? true : false
+      }
+    }
   }
 
   @SubscribeMessage('login')
@@ -120,7 +138,6 @@ export class SocketGateway implements OnGatewayInit {
 
   @SubscribeMessage('chat')
   async chatTo(client, payload) {
-    console.log(this.userMap)
     let toSocketId = this.userMap.get(payload.to)
     console.log({
       from: client.id,
