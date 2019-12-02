@@ -1,8 +1,6 @@
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayInit } from '@nestjs/websockets';
 import { UserService } from '../user/user.service';
-import { UserStatus } from '../../core/interfaces/enums/user-status.enum';
 import { RedisService } from 'nestjs-redis';
-import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 import { Message } from '../../core/interfaces/message.interface';
 import { MessageType } from '../../core/interfaces/enums/message.enum';
 
