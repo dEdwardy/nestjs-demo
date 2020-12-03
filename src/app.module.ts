@@ -36,7 +36,7 @@ import { RoutesModule } from './modules/routes/routes.module';
     TagModule,
     CommentModule,
     RoleModule,
-    FileModule,
+    // FileModule,
     // SocketModule,
     // FriendModule,
     RoutesModule

@@ -8,7 +8,7 @@ import { RedisService } from 'nestjs-redis';
 export class UserService {
     constructor(
         @InjectRepository(UserEntity) private readonly userReposity: Repository<UserEntity>,
-        private readonly redisService: RedisService
+        // private readonly redisService: RedisService
         ) {
 
     }
@@ -21,8 +21,8 @@ export class UserService {
             email
         })
         const data = await this.userReposity.save(entity);
-        const redis = await this.redisService.getClient();
-        await redis.sadd('users',data.id)
+        // const redis = await this.redisService.getClient();
+        // await redis.sadd('users',data.id)
         return data;
     }
     deleteUser(id: string): Promise<DeleteResult> {

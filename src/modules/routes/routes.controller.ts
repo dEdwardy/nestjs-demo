@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiUseTags } from '@nestjs/swagger';
 import { routesDto } from './routes.dto';
 import { RoutesService } from './routes.service';
 
 @ApiUseTags('routes')
-@Controller('routes')
+@Controller('api/routes')
 export class RoutesController {
     constructor(private readonly routesService:RoutesService){
 
@@ -16,5 +16,9 @@ export class RoutesController {
     @Get()
     getRoutes(){
         return  this.routesService.getAll()
+    }
+    @Get('/tree')
+    getTree(){
+        return  this.routesService.getRoutesTree()
     }
 }

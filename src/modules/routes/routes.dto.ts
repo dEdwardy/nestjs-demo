@@ -3,7 +3,7 @@ export enum menuStatus  {
     OFF = 'off'
 }
 export class routesDto {
-    id:number;
+    id?:number;
     parentId?:[number,null];
     type:string;
     icon:string;

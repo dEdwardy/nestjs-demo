@@ -10,7 +10,7 @@ import { FriendModule } from '../friend/friend.module';
     imports:[
         TypeOrmModule.forFeature([User]),
         forwardRef(() => AuthModule),  //forwardRef解决循环依赖 a=>b b=> a
-        forwardRef(() => FriendModule),
+        // forwardRef(() => FriendModule),
     ],
     providers: [UserService],
     controllers:[UserController],

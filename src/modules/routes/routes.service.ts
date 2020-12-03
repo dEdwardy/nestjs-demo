@@ -15,4 +15,28 @@ export class RoutesService {
     getAll() {
         return this.routesRepository.find();
     }
+    async getRoutesTree() {
+        let arr = await this.routesRepository.find();
+        let tree = this.array2Tree(arr);
+        return  tree
+    }
+
+     array2Tree(arr){
+        if(!Array.isArray(arr) || !arr.length) return;
+        let map = {};
+        arr.forEach(item => map[item.id] = item);
+    
+        let roots = [];
+        arr.forEach(item => {
+            const parent = map[item.parentId];
+            if(parent){
+                (parent.children || (parent.children=[])).push(item);
+            }
+            else{
+                roots.push(item);
+            }
+        })
+    
+        return roots;
+    }
 }
