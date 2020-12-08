@@ -28,12 +28,15 @@ export class Routes {
   //菜单显示与否
   @Column()
   show: Boolean;
-  //父级菜单
+  //父级菜单id
   @Column({nullable:true})
-  parentId: Number;
-  //父级菜单
+  pid: Number;
+  //菜单路径
   @Column()
   path: string;
+  //组件路径
+  @Column()
+  component?: string;
   @Column({ comment: '是否外链' })
   link: Boolean;
   @CreateDateColumn({ comment: '创建日期' })
