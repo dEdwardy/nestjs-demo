@@ -17,14 +17,15 @@ import { FileModule } from './modules/file/file.module';
 import { SocketModule } from './modules/socket/socket.module';
 import { FriendModule } from './modules/friend/friend.module';
 import { RoutesModule } from './modules/routes/routes.module';
+import { CacheModule } from './modules/cache/cache.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: '127.0.0.1',
+      host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'root',
+      password: 'root*',
       database: 'nestjs',
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true
@@ -39,7 +40,8 @@ import { RoutesModule } from './modules/routes/routes.module';
     // FileModule,
     // SocketModule,
     // FriendModule,
-    RoutesModule
+    RoutesModule,
+    CacheModule
   ],
   controllers: [],
   providers: [

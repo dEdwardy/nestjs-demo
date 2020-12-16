@@ -7,7 +7,7 @@ import { routesDto } from './routes.dto';
 export class RoutesService {
     constructor(
         @InjectRepository(Routes)
-        private readonly routesRepository: Repository<Routes>,
+        private readonly routesRepository: Repository<Routes>
     ) { }
     store(data: Partial<routesDto>) {
         return this.routesRepository.save(data);
