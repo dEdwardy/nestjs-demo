@@ -9,10 +9,13 @@ export class RoutesService {
         @InjectRepository(Routes)
         private readonly routesRepository: Repository<Routes>
     ) { }
+    private count:number = 0;
     store(data: Partial<routesDto>) {
         return this.routesRepository.save(data);
     }
     getAll() {
+        ++this.count;
+        console.log(this.count)
         return this.routesRepository.find();
     }
     async getRoutesTree() {

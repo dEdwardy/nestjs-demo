@@ -27,12 +27,13 @@ export class RoutesController {
     @Get()
     async getRoutes() {
         let key = 'api/routes'
-        let exp = 1
+        let exp = 2
         let cache = await this.cacheService.get(key)
         if (cache) {
             return cache
         }
         let value = await this.routesService.getAll()
+        await this.cacheService.unlock();
         this.num++
         if (this.timer) {
             clearTimeout(this.timer)
@@ -40,7 +41,7 @@ export class RoutesController {
         } 
             this.timer = setTimeout(() => {
                 console.log('缓存一共失效'+this.num + '次')
-            }, 2000)
+            },)
         await this.cacheService.set(key, value, exp)
         return value;
     }

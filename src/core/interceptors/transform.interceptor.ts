@@ -12,6 +12,11 @@ export interface Response<T> {
 export class TransformInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const res = context.switchToHttp().getResponse();
+    const req = context.switchToHttp().getRequest();
+    let excludePath = ['/status'];
+    if(excludePath.includes(req.url)){
+      return next.handle()
+    }
     return next
       .handle()
       .pipe(

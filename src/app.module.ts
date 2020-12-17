@@ -20,8 +20,41 @@ import { RoutesModule } from './modules/routes/routes.module';
 import { CacheModule } from './modules/cache/cache.module';
 import { ConfigModule } from '@nestjs/config';
 import { RedisModule } from 'nestjs-redis';
+import { EmailModule } from './modules/email/email.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter'
+import { StatusMonitorModule } from 'nest-status-monitor'
+import { TaskModule } from './modules/task/task.module';
+import * as path from 'path';
+import MonitorConfig from './config/statusMonitor'
+import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
+    //:TODO 循环依赖
+    // ScheduleModule.forRoot(),
+    StatusMonitorModule.setUp(MonitorConfig),
+    MailerModule.forRoot({
+      transport:{
+        service:'qq',
+        port:465,
+        secure: true,	//安全方式发送,建议都加上
+        auth:{
+          user:process.env.MAIL_USER,
+          pass:process.env.MAIL_PASS
+        },
+        defaults: {
+          from: `nest-modules <${process.env.MAIL_USER}>`, // outgoing email ID
+        },
+        template:{
+          dir: path.join(__dirname,'./templates/email'),
+          adapter: new EjsAdapter(), 
+          options: {
+            strict: true,
+          },
+        }
+      }
+      
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -53,6 +86,8 @@ import { RedisModule } from 'nestjs-redis';
     // FriendModule,
     RoutesModule,
     CacheModule,
+    EmailModule,
+    TaskModule,
   ],
   controllers: [],
   providers: [
