@@ -18,17 +18,28 @@ import { SocketModule } from './modules/socket/socket.module';
 import { FriendModule } from './modules/friend/friend.module';
 import { RoutesModule } from './modules/routes/routes.module';
 import { CacheModule } from './modules/cache/cache.module';
+import { ConfigModule } from '@nestjs/config';
+import { RedisModule } from 'nestjs-redis';
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    RedisModule.register({
+      port: parseInt(process.env.REDIS_PORT, 10),
+      host: process.env.HOST,
+      password: process.env.PASSWORD,
+      db: parseInt(process.env.REDIS_DB_INDEX, 10),
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root*',
-      database: 'nestjs',
+      host: process.env.HOST,
+      port: parseInt(process.env.MYSQL_PORT, 10),
+      username: process.env.MYSQL_USERNAME,
+      password: process.env.PASSWORD,
+      database: process.env.MYSQL_DB_NAME,
       entities: ['dist/**/*.entity{.ts,.js}'],
-      synchronize: true
+      synchronize: true,
     }),
     UserModule,
     AuthModule,
@@ -41,27 +52,27 @@ import { CacheModule } from './modules/cache/cache.module';
     // SocketModule,
     // FriendModule,
     RoutesModule,
-    CacheModule
+    CacheModule,
   ],
   controllers: [],
   providers: [
     AppService,
     {
       provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor
+      useClass: LoggingInterceptor,
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: TransformInterceptor
+      useClass: TransformInterceptor,
     },
     {
-      provide:APP_GUARD,
-      useClass: DemoAuthGuard
+      provide: APP_GUARD,
+      useClass: DemoAuthGuard,
     },
     {
-      provide:APP_GUARD,
-      useClass: DemoRolesGuard
-    }
+      provide: APP_GUARD,
+      useClass: DemoRolesGuard,
+    },
   ],
 })
 export class AppModule {}
