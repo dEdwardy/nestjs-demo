@@ -16,4 +16,7 @@ export class FileService {
     async show(id:string) {
         return await this.fileRepository.findOne(id);
     }
+    async find(query:Object){
+        return await this.fileRepository.findOne(query)
+    }
 }

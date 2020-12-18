@@ -5,8 +5,11 @@ export class File{
     @PrimaryGeneratedColumn('uuid')
     id:string;
 
-    @Column()
-    uid:string;
+    @Column({nullable:true})
+    uid?:string;
+
+    @Column({nullable:true})
+    hash?:string;
 
     @Column()
     originalname:string;

@@ -7,6 +7,7 @@ export class AppController {
     count = 0;
     @Get()
     getHello(): string {
+        console.log(process.env.EMAIL_FROM)
         return this.appService.getHello();
     }
     @Get('banner/type=2')

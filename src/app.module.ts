@@ -27,37 +27,18 @@ import { StatusMonitorModule } from 'nest-status-monitor'
 import { TaskModule } from './modules/task/task.module';
 import * as path from 'path';
 import MonitorConfig from './config/statusMonitor'
+import MailConfig from './config/email'
+//@ts-ignore
 import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     //:TODO 循环依赖
     // ScheduleModule.forRoot(),
-    StatusMonitorModule.setUp(MonitorConfig),
-    MailerModule.forRoot({
-      transport:{
-        service:'qq',
-        port:465,
-        secure: true,	//安全方式发送,建议都加上
-        auth:{
-          user:process.env.MAIL_USER,
-          pass:process.env.MAIL_PASS
-        },
-        defaults: {
-          from: `nest-modules <${process.env.MAIL_USER}>`, // outgoing email ID
-        },
-        template:{
-          dir: path.join(__dirname,'./templates/email'),
-          adapter: new EjsAdapter(), 
-          options: {
-            strict: true,
-          },
-        }
-      }
-      
-    }),
+    // StatusMonitorModule.setUp(MonitorConfig),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    MailerModule.forRoot(MailConfig),
     RedisModule.register({
       port: parseInt(process.env.REDIS_PORT, 10),
       host: process.env.HOST,
@@ -81,7 +62,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     TagModule,
     CommentModule,
     RoleModule,
-    // FileModule,
+    FileModule,
     // SocketModule,
     // FriendModule,
     RoutesModule,
