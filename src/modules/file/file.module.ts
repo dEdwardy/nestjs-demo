@@ -4,12 +4,15 @@ import { FileService } from './file.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { File } from './file.entity'
+import { memoryStorage } from 'multer';
 
 @Module({
   imports:[
     TypeOrmModule.forFeature([File]),
     MulterModule.register({
-      dest: './uploads',
+      // dest: './uploads',
+      storage:memoryStorage()
+      
       // fileFilter:(req,file,callback) => {
       //   const mimetypes = [
       //     'image/png',
