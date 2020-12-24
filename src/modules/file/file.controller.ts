@@ -127,9 +127,11 @@ export class FileController {
   @UseInterceptors(FileInterceptor('file'))
   async p1(@UploadedFile() file, @Body() body, @Param('slice') slice) {
     console.log(slice);
-    let { filename, total, current, base64 } = body;
-    base64 = base64.replace(/data.*?base64,/, '');
-    let buffer = Buffer.from(base64, 'base64');
+    // let { filename, total, current, base64 } = body;
+    //暂时不要hash
+    let { filename, total, current } = body;
+    // base64 = base64.replace(/data.*?base64,/, '');
+    // let buffer = Buffer.from(base64, 'base64');
     try {
       //创建目录成功
       await mkdirP(`./uploads/temp-${filename}`);

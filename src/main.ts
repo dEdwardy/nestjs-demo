@@ -12,7 +12,7 @@ async function bootstrap() {
     prefix: '/static/', // 虚拟名称 http://localhost:3010/static/...png
   });
   app.enableCors({
-    origin:"http://localhost:8081",
+    origin:"http://localhost:8080",
     preflightContinue:false,
     credentials:true
   });
