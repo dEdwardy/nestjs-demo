@@ -11,7 +11,10 @@ import { memoryStorage } from 'multer';
     TypeOrmModule.forFeature([File]),
     MulterModule.register({
       // dest: './uploads',
-      storage:memoryStorage()
+      storage:memoryStorage(),
+      limits:{
+        fieldSize: 1024*1024*20
+      }
       
       // fileFilter:(req,file,callback) => {
       //   const mimetypes = [
