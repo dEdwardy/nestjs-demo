@@ -375,13 +375,15 @@
     cli-color "1.4.0"
     uuid "3.3.2"
 
-"@nestjs/common@^6.7.2":
-  version "6.9.0"
-  resolved "https://registry.npm.taobao.org/@nestjs/common/download/@nestjs/common-6.9.0.tgz#00323078ff7e8585df4921af0f4f75dfde873866"
+"@nestjs/common@^6.10.2":
+  version "6.11.11"
+  resolved "https://registry.npm.taobao.org/@nestjs/common/download/@nestjs/common-6.11.11.tgz#701da2462a15cc94d55ec863ddd9f2fb0bbd7136"
+  integrity sha1-cB2iRioVzJTVXshj3dny+wu9cTY=
   dependencies:
-    axios "0.19.0"
+    axios "0.19.2"
     cli-color "2.0.0"
-    uuid "3.3.3"
+    tslib "1.11.1"
+    uuid "7.0.1"
 
 "@nestjs/config@^0.6.1":
   version "0.6.1"
@@ -395,15 +397,18 @@
     lodash.set "4.3.2"
     uuid "8.3.1"
 
-"@nestjs/core@^6.7.2":
-  version "6.9.0"
-  resolved "https://registry.npm.taobao.org/@nestjs/core/download/@nestjs/core-6.9.0.tgz#cf4ceb19b699f838f2dc5bc46797f6e357f2cfc8"
+"@nestjs/core@^6.10.2":
+  version "6.11.11"
+  resolved "https://registry.npm.taobao.org/@nestjs/core/download/@nestjs/core-6.11.11.tgz#2b97a3e9c2a853f5693ed84daf81c1ee3b2782b4"
+  integrity sha1-K5ej6cKoU/VpPthNr4HB7jsngrQ=
   dependencies:
     "@nuxtjs/opencollective" "0.2.2"
     fast-safe-stringify "2.0.7"
     iterare "1.2.0"
-    object-hash "2.0.0"
-    uuid "3.3.3"
+    object-hash "2.0.3"
+    path-to-regexp "3.2.0"
+    tslib "1.11.1"
+    uuid "7.0.1"
 
 "@nestjs/jwt@^6.1.1":
   version "6.1.1"
@@ -416,14 +421,16 @@
   version "6.1.0"
   resolved "https://registry.npm.taobao.org/@nestjs/passport/download/@nestjs/passport-6.1.0.tgz#80da326cc976a82530648d8025b04c8e2d41c10e"
 
-"@nestjs/platform-express@^6.7.2":
-  version "6.9.0"
-  resolved "https://registry.npm.taobao.org/@nestjs/platform-express/download/@nestjs/platform-express-6.9.0.tgz#4d517ce7ba12c96daa27bde159fb0d915391f71a"
+"@nestjs/platform-express@^6.10.2":
+  version "6.11.11"
+  resolved "https://registry.npm.taobao.org/@nestjs/platform-express/download/@nestjs/platform-express-6.11.11.tgz#d30ea1f39299e92e080553e893a0afac54f20c6e"
+  integrity sha1-0w6h85KZ6S4IBVPok6CvrFTyDG4=
   dependencies:
     body-parser "1.19.0"
     cors "2.8.5"
     express "4.17.1"
     multer "1.4.2"
+    tslib "1.11.1"
 
 "@nestjs/platform-socket.io@^6.10.1":
   version "6.10.1"
@@ -1258,9 +1265,9 @@ axios@0.19.0:
     follow-redirects "1.5.10"
     is-buffer "^2.0.2"
 
-axios@^0.19.2:
+axios@0.19.2, axios@^0.19.2:
   version "0.19.2"
-  resolved "https://registry.npm.taobao.org/axios/download/axios-0.19.2.tgz?cache=0&sync_timestamp=1603468716105&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Faxios%2Fdownload%2Faxios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
+  resolved "https://registry.npm.taobao.org/axios/download/axios-0.19.2.tgz?cache=0&sync_timestamp=1608609188013&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Faxios%2Fdownload%2Faxios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
   integrity sha1-PqNsXYgY0NX4qKl6bTa4bNwAyyc=
   dependencies:
     follow-redirects "1.5.10"
@@ -5522,9 +5529,10 @@ object-copy@^0.1.0:
     define-property "^0.2.5"
     kind-of "^3.0.3"
 
-object-hash@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.npm.taobao.org/object-hash/download/object-hash-2.0.0.tgz#7c4cc341eb8b53367312a7c546142f00c9e0ea20"
+object-hash@2.0.3:
+  version "2.0.3"
+  resolved "https://registry.npm.taobao.org/object-hash/download/object-hash-2.0.3.tgz#d12db044e03cd2ca3d77c0570d87225b02e1e6ea"
+  integrity sha1-0S2wROA80so9d8BXDYciWwLh5uo=
 
 object-inspect@^1.6.0:
   version "1.6.0"
@@ -5821,6 +5829,11 @@ path-to-regexp@0.1.7:
 path-to-regexp@3.0.0:
   version "3.0.0"
   resolved "https://registry.npm.taobao.org/path-to-regexp/download/path-to-regexp-3.0.0.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fpath-to-regexp%2Fdownload%2Fpath-to-regexp-3.0.0.tgz#c981a218f3df543fa28696be2f88e0c58d2e012a"
+
+path-to-regexp@3.2.0:
+  version "3.2.0"
+  resolved "https://registry.npm.taobao.org/path-to-regexp/download/path-to-regexp-3.2.0.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fpath-to-regexp%2Fdownload%2Fpath-to-regexp-3.2.0.tgz#fa7877ecbc495c601907562222453c43cc204a5f"
+  integrity sha1-+nh37LxJXGAZB1YiIkU8Q8wgSl8=
 
 path-type@^3.0.0:
   version "3.0.0"
@@ -7739,6 +7752,11 @@ uuid@3.3.2:
 uuid@3.3.3, uuid@^3.3.2:
   version "3.3.3"
   resolved "https://registry.npm.taobao.org/uuid/download/uuid-3.3.3.tgz#4568f0216e78760ee1dbf3a4d2cf53e224112866"
+
+uuid@7.0.1:
+  version "7.0.1"
+  resolved "https://registry.npm.taobao.org/uuid/download/uuid-7.0.1.tgz?cache=0&sync_timestamp=1607458532020&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fuuid%2Fdownload%2Fuuid-7.0.1.tgz#95ed6ff3d8c881cbf85f0f05cc3915ef994818ef"
+  integrity sha1-le1v89jIgcv4Xw8FzDkV75lIGO8=
 
 uuid@8.3.0:
   version "8.3.0"
