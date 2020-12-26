@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import {  forwardRef, Module } from '@nestjs/common';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './modules/user/user.module';
@@ -30,10 +30,22 @@ import MonitorConfig from './config/statusMonitor'
 import MailConfig from './config/email'
 //@ts-ignore
 import { ScheduleModule } from '@nestjs/schedule';
+import { SpiderModule } from './modules/spider/spider.module';
+import { BullModule } from '@nestjs/bull';
+import { AudioModule } from './modules/jobs/audio/audio.module';
 @Module({
   imports: [
-    //:TODO 循环依赖
-    // ScheduleModule.forRoot(),
+    //实例化并/或注册队列
+    BullModule.registerQueue({
+      name:'queue',
+      redis:{
+        host:process.env.HOST,
+        port: parseInt(process.env.REDIS_PORT, 10),
+      }
+    }),
+    //定时任务模块
+    TaskModule,
+    //服务监控模块
     // StatusMonitorModule.setUp(MonitorConfig),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -68,7 +80,8 @@ import { ScheduleModule } from '@nestjs/schedule';
     RoutesModule,
     CacheModule,
     EmailModule,
-    TaskModule,
+    SpiderModule,
+    AudioModule,
   ],
   controllers: [],
   providers: [
