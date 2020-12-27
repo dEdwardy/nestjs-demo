@@ -18,8 +18,6 @@ import { FileDto } from './file.dto';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
 import { mkdirP, statP, unlinkP, rmdirP } from '../../utils';
-import { encode, decode } from 'iconv-lite';
-import { Console } from 'console';
 import {
   writeFile,
   readFile,
@@ -30,13 +28,14 @@ import {
   createWriteStream,
 } from 'fs';
 import { promisify } from 'util';
+import { resolve } from 'path';
 const rimraf = require('rimraf');
 const writeFileP = promisify(writeFile);
 const appendFileP = promisify(appendFile);
 const readFileP = promisify(readFile);
 @Controller('files')
 export class FileController {
-  constructor(private readonly fileService: FileService) {}
+  constructor(private readonly fileService: FileService) { }
   async createDir() {
     try {
       //创建目录成功
@@ -71,7 +70,7 @@ export class FileController {
               //目录已存在
             }
           } finally {
-            console.log('finally'+slice)
+            console.log('finally' + slice)
             cb(null, './uploads/temp-' + folederName + '/');
           }
         },
@@ -81,8 +80,8 @@ export class FileController {
           cb(null, slice);
         },
       }),
-      limits:{
-        fieldSize: 1024*1024*200
+      limits: {
+        fieldSize: 1024 * 1024 * 200
       }
     }),
   )
@@ -105,20 +104,30 @@ export class FileController {
     };
   }
 
-  @Get(':id')
-  async show(@Param('id') id: string, @Res() res: Response) {
-    const file = await this.fileService.show(id);
-    res.setHeader('Content-Type', 'application/octet-stream');
-    res.setHeader(
-      'Content-Disposition',
-      `attachment; filename=${file.filename}`,
-    );
-    res.sendFile(file.filename, {
-      root: 'uploads',
-      headers: {
-        'Content-type': file.mimetype,
-      },
-    });
+  // @Get(':id')
+  // async show(@Param('id') id: string, @Res() res: Response) {
+  //   const file = await this.fileService.show(id);
+  //   res.setHeader('Content-Type', 'application/octet-stream');
+  //   res.setHeader(
+  //     'Content-Disposition',
+  //     `attachment; filename=${file.filename}`,
+  //   );
+  //   res.sendFile(file.filename, {
+  //     root: 'uploads',
+  //     headers: {
+  //       'Content-type': file.mimetype,
+  //     },
+  //   });
+  // }
+  /**
+   * 判断文件是否存在  若存在则直接返回
+   * @param body 
+   */
+  @Post('p1-exist')
+  @HttpCode(HttpStatus.OK)
+  async exist(@Body() body) {
+    let { hash } = body;
+    return await this.fileService.exist(hash)
   }
 
   //自定义文件读写
@@ -126,12 +135,8 @@ export class FileController {
   @HttpCode(200)
   @UseInterceptors(FileInterceptor('file'))
   async p1(@UploadedFile() file, @Body() body, @Param('slice') slice) {
-    console.log(slice);
-    // let { filename, total, current, base64 } = body;
-    //暂时不要hash
-    let { filename, total, current } = body;
-    // base64 = base64.replace(/data.*?base64,/, '');
-    // let buffer = Buffer.from(base64, 'base64');
+    // console.log(slice);
+    let { filename, total, current, hash } = body;
     try {
       //创建目录成功
       await mkdirP(`./uploads/temp-${filename}`);
@@ -141,33 +146,42 @@ export class FileController {
       }
     }
     //判断该切片是否已上传
-    statP(`./uploads/temp-${filename}/${slice}`)
+    // statP(`./uploads/temp-${filename}/${slice}`)
+    this.fileService.exist(hash)
       .then(async res => {
-        //切片已存在  直接返回ok
-        return {
-          current,
-          total,
-        };
+        if (res) {
+          //切片已存在  直接返回ok
+          return {
+            current: current,
+            total,
+          };
+        } else {
+          //切片不存在
+          await writeFileP(`./uploads/temp-${filename}/${slice}`, file.buffer)
+            .then(() => {
+              this.fileService.store({
+                ...file,
+                hash,
+                filename
+              })
+            })
+            .catch(e => console.log(e));
+        }
       })
-      .catch(async e => {
-        //切片不存在
-        await writeFileP(`./uploads/temp-${filename}/${slice}`, file.buffer)
-          .then(res => {
-            // console.log(file)
-            // this.fileService.store()
-          })
-          .catch(e => console.log(e));
-        // await this.save(buffer,`./uploads/temp-${filename}/${slice}`)
+      .catch(e => {
+        console.log(e)
       });
     return {
       current,
       total,
     };
   }
+  //:TODO merge 流程尚有问题 后续引入async 控制异步流程
   @Post('p1-merge')
-  async merge(@Body() body) {
+  @UseInterceptors(FileInterceptor('file'))
+  async merge(@UploadedFile() file, @Body() body) {
     let { filename, total } = body;
-    console.log(filename);
+    // console.log(filename);
     const run = async () => {
       try {
         for (let i = 0; i < total; i++) {
@@ -176,20 +190,37 @@ export class FileController {
           );
           await appendFileP(`./uploads/${filename}`, buffer);
         }
-        rimraf(`./uploads/temp-${filename}`, (err, res) => {
-          if (err) {
-            console.log(err);
-          }
-          console.log(res);
-        });
       } catch (error) {
+        console.log('2222222222222222222');
         console.log(error);
       }
+      let md5 = await this.fileService.getMd5(resolve(__dirname, '../../../uploads/', filename))
+      console.log(md5)
+      await this.fileService.store({
+        ...file,
+        filename,
+        hash: md5
+      })
+      rimraf(`./uploads/temp-${filename}`, (err, res) => {
+        if (err) {
+          console.log('11111111111111111');
+          console.log(err);
+        } else {
+          this.fileService.deleteSlices(filename)
+        }
+      });
     };
     run();
-    return 'ok';
+    return {
+      current: total,
+      total,
+    };
   }
-
+  @Get('p1-md5')
+  md5() {
+    let path = resolve(__dirname, '../../../uploads/', 'pkg_main_heliaircrafts.grp')
+    return this.fileService.getMd5(path)
+  }
   save(buffer: Buffer, path: string) {
     let p = new Promise((resolve, reject) => {
       let writeStream = createWriteStream(path, 'utf8');

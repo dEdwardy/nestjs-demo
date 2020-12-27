@@ -6,9 +6,6 @@ export class File{
     id:string;
 
     @Column({nullable:true})
-    uid?:string;
-
-    @Column({nullable:true})
     hash?:string;
 
     @Column()
@@ -17,7 +14,7 @@ export class File{
     @Column()
     filename:string;
 
-    @Column()
+    @Column({nullable:true})
     mimetype:string;
 
     @Column()
