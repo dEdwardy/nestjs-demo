@@ -79,7 +79,7 @@ export class FileController {
           let slice = arr[arr.length - 1];
           cb(null, slice);
         },
-      }),
+      }),  
       limits: {
         fieldSize: 1024 * 1024 * 200
       }
@@ -125,7 +125,7 @@ export class FileController {
    */
   @Post('p1-exist')
   @HttpCode(HttpStatus.OK)
-  async exist(@Body() body) {
+  async exist(@Body() body) { 
     let { hash } = body;
     return await this.fileService.exist(hash)
   }
@@ -176,7 +176,7 @@ export class FileController {
       total,
     };
   }
-  //:TODO merge 流程尚有问题 后续引入async 控制异步流程
+  //:TODO merge 太慢了  后续以streanm处理
   @Post('p1-merge')
   @UseInterceptors(FileInterceptor('file'))
   async merge(@UploadedFile() file, @Body() body) {
