@@ -182,13 +182,17 @@ export class FileController {
   async merge(@UploadedFile() file, @Body() body) {
     let { filename, total } = body;
     // console.log(filename);
+    let read = (path) => readFileP(path)
+    let append = (path,buffer) => appendFileP(path,buffer)
     const run = async () => {
       try {
         for (let i = 0; i < total; i++) {
-          let buffer = await readFileP(
-            `./uploads/temp-${filename}/${filename}-${i}`,
-          );
-          await appendFileP(`./uploads/${filename}`, buffer);
+          // let buffer = await readFileP(
+          //   `./uploads/temp-${filename}/${filename}-${i}`,
+          // );
+          // await appendFileP(`./uploads/${filename}`, buffer);
+          let buffer = await read(`./uploads/temp-${filename}/${filename}-${i}`);
+          await append(`./uploads/${filename}`,buffer)
         }
       } catch (error) {
         console.log('2222222222222222222');
