@@ -33,6 +33,7 @@ const rimraf = require('rimraf');
 const writeFileP = promisify(writeFile);
 const appendFileP = promisify(appendFile);
 const readFileP = promisify(readFile);
+const MAX_LISTENERS = 2000;
 @Controller('files')
 export class FileController {
   constructor(private readonly fileService: FileService) { }
@@ -176,7 +177,7 @@ export class FileController {
       total,
     };
   }
-  //:TODO merge 太慢了  后续以streanm处理
+  //:TODO merge 太慢了  后续以streanm处理  stream pipe流程尚需控制
   @Post('p1-merge')
   @UseInterceptors(FileInterceptor('file'))
   async merge(@UploadedFile() file, @Body() body) {
@@ -184,18 +185,24 @@ export class FileController {
     // console.log(filename);
     let read = (path) => readFileP(path)
     let append = (path,buffer) => appendFileP(path,buffer)
+    let pipe = (path,target) => {
+      return new Promise((resolve,reject) => {
+        let readStream = createReadStream(path);
+           readStream.pipe(target)
+      })
+    }
     const run = async () => {
       try {
+        // let writeStream = createWriteStream(`./uploads/${filename}`,{ highWaterMark:1 })
+        // writeStream.setMaxListeners(MAX_LISTENERS)
         for (let i = 0; i < total; i++) {
-          // let buffer = await readFileP(
-          //   `./uploads/temp-${filename}/${filename}-${i}`,
-          // );
-          // await appendFileP(`./uploads/${filename}`, buffer);
           let buffer = await read(`./uploads/temp-${filename}/${filename}-${i}`);
           await append(`./uploads/${filename}`,buffer)
+          //  let readStream = createReadStream(`./uploads/temp-${filename}/${filename}-${i}`,{ highWaterMark:4});
+          //  readStream.pipe(writeStream)
+          // await pipe(`./uploads/temp-${filename}/${filename}-${i}`,writeStream).then(res => res).catch(e =>console.log(e))
         }
       } catch (error) {
-        console.log('2222222222222222222');
         console.log(error);
       }
       let md5 = await this.fileService.getMd5(resolve(__dirname, '../../../uploads/', filename))
