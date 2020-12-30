@@ -33,7 +33,12 @@ const rimraf = require('rimraf');
 const writeFileP = promisify(writeFile);
 const appendFileP = promisify(appendFile);
 const readFileP = promisify(readFile);
+const streamqueue = require('streamqueue');
 const MAX_LISTENERS = 2000;
+
+const createSeriesStream = require('series-stream')
+const ss = createSeriesStream()
+ss.setMaxListeners(MAX_LISTENERS)
 @Controller('files')
 export class FileController {
   constructor(private readonly fileService: FileService) { }
@@ -193,15 +198,24 @@ export class FileController {
     }
     const run = async () => {
       try {
-        // let writeStream = createWriteStream(`./uploads/${filename}`,{ highWaterMark:1 })
+        // let writeStream = createWriteStream(`./uploads/${filename}`)
         // writeStream.setMaxListeners(MAX_LISTENERS)
+        // 876441db2ba3783b13d1b009aeccb39c
+        let streamArr = []
         for (let i = 0; i < total; i++) {
-          let buffer = await read(`./uploads/temp-${filename}/${filename}-${i}`);
-          await append(`./uploads/${filename}`,buffer)
-          //  let readStream = createReadStream(`./uploads/temp-${filename}/${filename}-${i}`,{ highWaterMark:4});
+          // streamArr.push(createReadStream(`./uploads/temp-${filename}/${filename}-${i}`))
+          // let buffer = await read(`./uploads/temp-${filename}/${filename}-${i}`);
+          // await append(`./uploads/${filename}`,buffer)
+          //  let readStream = createReadStream(`./uploads/temp-${filename}/${filename}-${i}`);
           //  readStream.pipe(writeStream)
           // await pipe(`./uploads/temp-${filename}/${filename}-${i}`,writeStream).then(res => res).catch(e =>console.log(e))
+          // let path = resolve(__dirname,`./uploads/temp-a.exe/a.exe-${i}`)
+          // console.log(path)
+          ss.add(createReadStream(`./uploads/temp-${filename}/${filename}-${i}`))
         }
+        // es.merge(streamArr).pipe(createWriteStream(`./uploads/${filename}`))
+        // streamqueue(...streamArr).pipe(createWriteStream(`./uploads/${filename}`))
+        ss.pipe(createWriteStream(`./uploads/${filename}`))
       } catch (error) {
         console.log(error);
       }
@@ -212,21 +226,36 @@ export class FileController {
         filename,
         hash: md5
       })
-      rimraf(`./uploads/temp-${filename}`, (err, res) => {
-        if (err) {
-          console.log('11111111111111111');
-          console.log(err);
-        } else {
-          this.fileService.deleteSlices(filename)
-        }
-      });
+      // rimraf(`./uploads/temp-${filename}`, (err, res) => {
+      //   if (err) {
+      //     console.log('11111111111111111');
+      //     console.log(err);
+      //   } else {
+      //     this.fileService.deleteSlices(filename)
+      //   }
+      // });
     };
+    // await this.rimrafP(`./uploads/temp-${filename}`)
     run();
     return {
       current: total,
       total,
     };
   }
+  rimrafP(filename){
+    return new Promise((resolve,reject) => {
+      rimraf(`./uploads/temp-${filename}`, (err, res) => {
+        if (err) {
+          console.log(err);
+          reject(false)
+        } else {
+          this.fileService.deleteSlices(filename)
+          resolve(true)
+        }
+      });
+    })
+  }
+
   @Get('p1-md5')
   md5() {
     let path = resolve(__dirname, '../../../uploads/', 'pkg_main_heliaircrafts.grp')
