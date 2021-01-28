@@ -11,7 +11,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     res.status(200)
       .json({
         data: {
-          statusCode: status,
+          status ,
           date: new Date().toLocaleDateString(),
           path: req.url,
           message
