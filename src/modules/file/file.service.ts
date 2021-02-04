@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { File } from './file.entity'
 import { createReadStream } from 'fs';
 import { createHash } from 'crypto';
-import { resolve } from 'dns';
 
 @Injectable()
 export class FileService {
@@ -32,7 +31,6 @@ export class FileService {
         return await this.fileRepository.findOne({hash})
     }
     getMd5(path:string):Promise<string>{
-        let file = new File()
         return new Promise((resolve,reject) => {
             let md5sum = createHash('md5');
             let stream = createReadStream(path)
@@ -48,4 +46,5 @@ export class FileService {
             })
         })
     }
+    
 }

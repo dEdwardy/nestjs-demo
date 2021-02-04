@@ -182,26 +182,28 @@ export class FileController {
       total,
     };
   }
+  //:TODO  合并文件无需读取整个文件 前端读取过了文件 直接存储文件信息 ！！！！！
   //:TODO merge 太慢了  后续以streanm处理  stream pipe流程尚需控制
   @Post('p1-merge')
+  @HttpCode(HttpStatus.OK)
   @UseInterceptors(FileInterceptor('file'))
   async merge(@UploadedFile() file, @Body() body) {
     let { filename, total } = body;
     // console.log(filename);
-    let read = (path) => readFileP(path)
-    let append = (path,buffer) => appendFileP(path,buffer)
-    let pipe = (path,target) => {
-      return new Promise((resolve,reject) => {
-        let readStream = createReadStream(path);
-           readStream.pipe(target)
-      })
-    }
+    // let read = (path) => readFileP(path)
+    // let append = (path,buffer) => appendFileP(path,buffer)
+    // let pipe = (path,target) => {
+    //   return new Promise((resolve,reject) => {
+    //     let readStream = createReadStream(path);
+    //        readStream.pipe(target)
+    //   })
+    // }
     const run = async () => {
       try {
         // let writeStream = createWriteStream(`./uploads/${filename}`)
         // writeStream.setMaxListeners(MAX_LISTENERS)
         // 876441db2ba3783b13d1b009aeccb39c
-        let streamArr = []
+        // let streamArr = []
         for (let i = 0; i < total; i++) {
           // streamArr.push(createReadStream(`./uploads/temp-${filename}/${filename}-${i}`))
           // let buffer = await read(`./uploads/temp-${filename}/${filename}-${i}`);
@@ -220,23 +222,24 @@ export class FileController {
         console.log(error);
       }
       let md5 = await this.fileService.getMd5(resolve(__dirname, '../../../uploads/', filename))
-      console.log(md5)
+      //还差originalname mimetype size  这些前端传过来  此接口就无需读取整个文件！！！！！
       await this.fileService.store({
         ...file,
         filename,
         hash: md5
       })
-      // rimraf(`./uploads/temp-${filename}`, (err, res) => {
-      //   if (err) {
-      //     console.log('11111111111111111');
-      //     console.log(err);
-      //   } else {
-      //     this.fileService.deleteSlices(filename)
-      //   }
-      // });
     };
-    // await this.rimrafP(`./uploads/temp-${filename}`)
     run();
+    // rimraf(`./uploads/temp-${filename}`, (err, res) => {
+    //   if (err) {
+    //     console.log('11111111111111111');
+    //     console.log(err);
+    //   } else {
+    //     console.log(res)
+    //     this.fileService.deleteSlices(filename)
+    //   }
+    // });
+    // await this.rimrafP(`./uploads/temp-${filename}`)
     return {
       current: total,
       total,
@@ -249,6 +252,7 @@ export class FileController {
           console.log(err);
           reject(false)
         } else {
+          console.log(res)
           this.fileService.deleteSlices(filename)
           resolve(true)
         }
