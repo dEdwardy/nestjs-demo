@@ -186,9 +186,10 @@ export class FileController {
   //:TODO merge 太慢了  后续以streanm处理  stream pipe流程尚需控制
   @Post('p1-merge')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(FileInterceptor('file'))
-  async merge(@UploadedFile() file, @Body() body) {
-    let { filename, total } = body;
+  // @UseInterceptors(FileInterceptor('file'))
+  async merge(@Body() body) {
+    let { filename, total,size } = body;
+    let mimetype = filename.substr(filename.lastIndexOf('.')+1)
     // console.log(filename);
     // let read = (path) => readFileP(path)
     // let append = (path,buffer) => appendFileP(path,buffer)
@@ -200,23 +201,9 @@ export class FileController {
     // }
     const run = async () => {
       try {
-        // let writeStream = createWriteStream(`./uploads/${filename}`)
-        // writeStream.setMaxListeners(MAX_LISTENERS)
-        // 876441db2ba3783b13d1b009aeccb39c
-        // let streamArr = []
         for (let i = 0; i < total; i++) {
-          // streamArr.push(createReadStream(`./uploads/temp-${filename}/${filename}-${i}`))
-          // let buffer = await read(`./uploads/temp-${filename}/${filename}-${i}`);
-          // await append(`./uploads/${filename}`,buffer)
-          //  let readStream = createReadStream(`./uploads/temp-${filename}/${filename}-${i}`);
-          //  readStream.pipe(writeStream)
-          // await pipe(`./uploads/temp-${filename}/${filename}-${i}`,writeStream).then(res => res).catch(e =>console.log(e))
-          // let path = resolve(__dirname,`./uploads/temp-a.exe/a.exe-${i}`)
-          // console.log(path)
           ss.add(createReadStream(`./uploads/temp-${filename}/${filename}-${i}`))
         }
-        // es.merge(streamArr).pipe(createWriteStream(`./uploads/${filename}`))
-        // streamqueue(...streamArr).pipe(createWriteStream(`./uploads/${filename}`))
         ss.pipe(createWriteStream(`./uploads/${filename}`))
       } catch (error) {
         console.log(error);
@@ -224,7 +211,9 @@ export class FileController {
       let md5 = await this.fileService.getMd5(resolve(__dirname, '../../../uploads/', filename))
       //还差originalname mimetype size  这些前端传过来  此接口就无需读取整个文件！！！！！
       await this.fileService.store({
-        ...file,
+        size,
+        mimetype,
+        originalname:filename,
         filename,
         hash: md5
       })
