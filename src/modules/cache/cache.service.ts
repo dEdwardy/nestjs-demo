@@ -13,8 +13,8 @@ export class CacheService {
         this.client = await this.redisService.getClient()
     }
     //Set 
-    async set(key: string, value: any, seconds: number = 60) {
-        value = JSON.stringify(value);
+    async set(key: string, value: any, seconds: number = 60, needLock = false) {
+        if(typeof value !== 'string')value = JSON.stringify(value);
         if (!this.client) {
             await this.getClient()
         }
@@ -35,18 +35,23 @@ export class CacheService {
         // } finally {
 
         // }
-        let lock = await this.lock(key, value, seconds)
-        if (lock) {
-            await this.client.set(key, value, 'EX', seconds)
-            await this.client.del(this.lock_key);
+        if(needLock){
+          let lock = await this.lock(key, value, seconds)
+          if (lock) {
+              await this.client.set(key, value, 'EX', seconds)
+              await this.client.del(this.lock_key);
+          }
+        }else{
+          await this.client.set(key, value, 'EX', seconds)
         }
+        
     }
     //get
-    async get(key: string) {
+    async get(key: string, needLock = false) {
         if (!this.client) {
             await this.getClient()
         }
-
+        if(!needLock)return await this.client.get(key)
         let data = await this.client.get(key)
         if (!data) {
             //缓存若不存在 则 加锁 走db

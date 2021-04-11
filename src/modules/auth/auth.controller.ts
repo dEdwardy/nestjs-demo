@@ -16,6 +16,12 @@ export class AuthController {
         console.log(req.ip)
         return await this.authService.login(data)
     }
+    @Post('app-login')
+    @ApiOperation({ title: 'App登录'})
+    @HttpCode(HttpStatus.OK)
+    async appLogin(@Body() data){
+        return await this.authService.appLogin(data)
+    }
     @Get('test')
     @UseGuards(AuthGuard('jwt'))
     async authTest(){

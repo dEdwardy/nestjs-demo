@@ -28,7 +28,7 @@ export class RoutesController {
     async getRoutes() {
         let key = 'api/routes'
         let exp = 2
-        let cache = await this.cacheService.get(key)
+        let cache = await this.cacheService.get(key,true)
         if (cache) {
             return cache
         }
@@ -42,7 +42,7 @@ export class RoutesController {
             this.timer = setTimeout(() => {
                 console.log('缓存一共失效'+this.num + '次')
             },)
-        await this.cacheService.set(key, value, exp)
+        await this.cacheService.set(key, value, exp, true)
         return value;
     }
     @Get('/tree')

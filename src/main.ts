@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './core/filters/http-exception.filter';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import { TransformInterceptor } from './core/interceptors/transform.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -12,12 +13,15 @@ async function bootstrap() {
     prefix: '/static/', // 虚拟名称 http://localhost:3010/static/...png
   });
   app.enableCors({
-    origin:"http://localhost:8080",
+    // origin:"http://localhost:80",
+    origin:"*",
+    // origin:'http://47.112.172.255',
     preflightContinue:false,
-    credentials:true
+    credentials:false
   });
   app.useGlobalPipes(new ValidationPipe())
   app.useGlobalFilters(new HttpExceptionFilter())
+  app.useGlobalInterceptors(new TransformInterceptor())
   const options = new DocumentBuilder()
     .setTitle('NestJS后台API')
     .setDescription('我的第一个nestjs项目')
