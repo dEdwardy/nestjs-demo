@@ -4,6 +4,7 @@ import { Repository, getRepository, DeleteResult, UpdateResult } from 'typeorm';
 import { User as UserEntity } from './user.entity'
 import { userDto, updatePwdDto } from './user.dto'
 import { RedisService } from 'nestjs-redis';
+
 @Injectable()
 export class UserService {
     constructor(
@@ -14,11 +15,11 @@ export class UserService {
     }
     async addUser(dto: userDto): Promise<any> {
         // console.log(dto)
-        const { username, password, email } = dto;
+        const { username, password, email, } = dto;
         const entity = this.userReposity.create({
             username,
             password,
-            email
+            email,
         })
         const data = await this.userReposity.save(entity);
         // const redis = await this.redisService.getClient();
@@ -44,8 +45,9 @@ export class UserService {
 
 
     }
-    findAll(): Promise<UserEntity[]> {
-        return this.userReposity.find({ relations: ['posts'] });
+    findAll() {
+      return this.userReposity.find({ relations: ['posts','roles'] });
+        // return this.userReposity.findAndCount({ relations: ['posts','roles'] });
     }
     async findOne(dto: userDto): Promise<UserEntity> {
         const findOneOptions = {

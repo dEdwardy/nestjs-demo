@@ -3,15 +3,15 @@ import { ApiModelProperty } from '@nestjs/swagger';
 import { Role } from '../role/role.entity';
 
 export class userDto {
-    @ApiModelProperty({ description:'用户名', default: 'Rose'})
+    @ApiModelProperty({ description:'用户名', example: 'Rose'})
     // @IsNotEmpty({ message: '请填写用户姓名' })
     readonly username: string;
 
-    @ApiModelProperty({ description:'密码', default: 'Rose'})
+    @ApiModelProperty({ description:'密码', example: 'Rose'})
     // @IsNotEmpty({ message: '请填写密码' })
     readonly password: string;
 
-    @ApiModelProperty({ description:'邮箱'})
+    @ApiModelProperty({ description:'邮箱', example: 'Rose@qq.com'})
     // @IsEmail()
     // @IsNotEmpty({ message: '请填写邮箱' })
     readonly email: string;

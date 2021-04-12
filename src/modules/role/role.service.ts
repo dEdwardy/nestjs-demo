@@ -14,4 +14,7 @@ export class RoleService {
     async store(data:RoleDto) {
         return await this.roleRepository.save(data);
     }
+    getAll(){
+      return this.roleRepository.find();
+    }
 }

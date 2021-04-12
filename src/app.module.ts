@@ -30,9 +30,11 @@ import MonitorConfig from './config/statusMonitor'
 import MailConfig from './config/email'
 //@ts-ignore
 import { ScheduleModule } from '@nestjs/schedule';
-import { SpiderModule } from './modules/spider/spider.module';
+// import { SpiderModule } from './modules/spider/spider.module';
 import { BullModule } from '@nestjs/bull';
 import { AudioModule } from './modules/jobs/audio/audio.module';
+import { SpiderModule } from './modules/spider/spider.module';
+import { MonitorModule } from './modules/monitor/monitor.module';
 @Module({
   imports: [
     //实例化并/或注册队列
@@ -67,21 +69,22 @@ import { AudioModule } from './modules/jobs/audio/audio.module';
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
-    UserModule,
-    AuthModule,
-    PostModule,
+    // MonitorModule,
+    // UserModule,
+    // AuthModule,
+    // PostModule,
     CategoryModule,
-    TagModule,
-    CommentModule,
-    RoleModule,
-    FileModule,
+    // TagModule,
+    // CommentModule,
+    // RoleModule,
+    // FileModule,
+    // RoutesModule,
+    // CacheModule,
+    // EmailModule,
+    AudioModule,
+    SpiderModule,
     // SocketModule,
     // FriendModule,
-    RoutesModule,
-    CacheModule,
-    EmailModule,
-    SpiderModule,
-    AudioModule,
   ],
   controllers: [],
   providers: [
