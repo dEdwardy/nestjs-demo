@@ -36,10 +36,10 @@ export class EmailService {
       subject: 'V3-Mall 验证码',
       template: 'hello',
       sender: 'Code',
-      // context: {
-      //   name: `您的验证码为:${data.code}，千万不要告诉他人哟！`,
-      // },
-      text: `您的验证码为:${data.code}，千万不要告诉他人哟！`
+      context: {
+        name: `您的验证码为:${data.code}，千万不要告诉他人哟！`,
+      },
+      // text: `您的验证码为:${data.code}，千万不要告诉他人哟！`
     }).catch(e => console.log(e))
   }
   //生成验证码（和登录状态一起存到redis）

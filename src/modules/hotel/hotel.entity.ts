@@ -18,8 +18,10 @@ export class Hotel{
     @Column({ nullable:true})
     tags:string;
 
-    @Column()
-    rate:string;
+    @Column({
+      type:'float'
+    })
+    rate:Number;
 
     @Column({nullable:true})
     img:string;

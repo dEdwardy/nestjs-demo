@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
-import { LoginDto } from './auth.dto';
+import { AppLoginDto, LoginDto } from './auth.dto';
 import { JwtPayload } from './auth.interface';
 import { JwtService } from '@nestjs/jwt';
 import { CacheService } from '../cache/cache.service';
@@ -35,10 +35,10 @@ export class AuthService {
     console.log(data);
     return this.jwtService.sign(data);
   }
-  async appLogin(data) {
+  async appLogin(data: AppLoginDto) {
     const { email, code } = data;
-    const info = await this.cacheService.get(email);
-    if (info && info == code) {
+    const info: string = await this.cacheService.get(email);
+    if (info && info.toLowerCase() === code.toLowerCase()) {
       const payload = { email, code };
       const token = this.signToken(payload);
       console.log(token);
@@ -46,8 +46,9 @@ export class AuthService {
         ...payload,
         token,
       };
-    }else{
+    } else {
       throw new UnauthorizedException('登录失败');
     }
   }
 }
+class appLoginDto {}

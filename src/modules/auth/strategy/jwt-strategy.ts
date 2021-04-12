@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport'
 import { Strategy, ExtractJwt, VerifiedCallback } from 'passport-jwt'
 import { JwtPayload } from '../auth.interface'
 import { UserService } from '../../user/user.service'
-import { CacheService } from 'src/modules/cache/cache.service'
+import { CacheService } from '../../cache/cache.service'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy){

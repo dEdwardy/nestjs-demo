@@ -1,10 +1,13 @@
-import { Controller, Get, Response } from '@nestjs/common';
+import { Controller, Get, Query, Response } from '@nestjs/common';
+import { ApiUseTags, ApiOperation,ApiModelProperty } from '@nestjs/swagger';
 import { HotelService } from '../hotel/hotel.service';
+import { PageInfo } from './spider.dto';
 import { SpiderService } from './spider.service';
 
 const cheerio = require('cheerio')
 const puppeteer = require('puppeteer')
 @Controller('spider')
+@ApiUseTags('Spider')
 export class SpiderController {
   constructor(
     private readonly spiderService: SpiderService,
@@ -52,40 +55,47 @@ export class SpiderController {
     return 'ok'
   }
   @Get('hotel-infos')
-  async getHotelInfos () {
+  @ApiOperation({ title:'爬取酒店数据' })
+  async getHotelInfos ( @Query() pageInfo:PageInfo) {
+    console.log(pageInfo)
+    let p = pageInfo.current
     // const store = this.hotelService.store;
     const url = 'http://hotel.elong.com/chengdu/';
-    console.log(url)
     try {
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
       await page.goto(url)
-      await page.evaluate(() => {
-        console.log('evalute-----------')
+      let data = await page.evaluate(async(p ) => {
+        let curPage = document.querySelector('#pageContainer').querySelectorAll('a')[p]
+        await curPage.click()
         const arr = []
         const items = document.querySelectorAll('.h_item')
         for (let item of items) {
-          console.log(item)
-          const img = item.querySelector('img').src;
+          const img = item.querySelector('img').getAttribute('big-src')
+          console.log(img)
           const name = item.querySelector('.info_cn').textContent
           const location = item.querySelector('.h_info_b2').textContent
           const rate = Number(item.querySelector('.t20.c37e').textContent)
-          const tag = [...item.querySelectorAll('.childHotel')].map(i => i.textContent).join(',')
+          const tags = [...item.querySelectorAll('.childHotel')].map(i => i.textContent).join(',')
           const desc = item.querySelector('.block.listTagItem').textContent
           arr.push({
             img,
             name,
             location,
             rate,
-            tag,
+            tags,
             desc
           })
         }
-        console.log(arr)
-      })
+        return arr
+      },p)
       await browser.close()
+      console.log(data)
+      let  res = await this.hotelService.store(data)
+      console.log(res)
     } catch (err) {
       console.log(err)
     }
   }
 }
+
