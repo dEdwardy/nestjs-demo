@@ -20,7 +20,7 @@ export class TransformInterceptor implements NestInterceptor {
     return next
       .handle()
       .pipe(
-        map(data => ({ data: data ? data:null ,status:200 }))
+        map(data => ({ data: data ? data:null ,status:data?.status ?? 200 }))
       )
   }
 }

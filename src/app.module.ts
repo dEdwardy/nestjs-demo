@@ -35,6 +35,8 @@ import { BullModule } from '@nestjs/bull';
 import { AudioModule } from './modules/jobs/audio/audio.module';
 import { SpiderModule } from './modules/spider/spider.module';
 import { MonitorModule } from './modules/monitor/monitor.module';
+import { HotelModule } from './modules/hotel/hotel.module';
+import { RoomModule } from './modules/room/room.module';
 @Module({
   imports: [
     //实例化并/或注册队列
@@ -83,6 +85,8 @@ import { MonitorModule } from './modules/monitor/monitor.module';
     // EmailModule,
     AudioModule,
     SpiderModule,
+    HotelModule,
+    RoomModule,
     // SocketModule,
     // FriendModule,
   ],

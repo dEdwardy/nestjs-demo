@@ -47,7 +47,16 @@ export class EmailController {
     @HttpCode(HttpStatus.OK)
     async sendCode(@Body() data){
       let { email } = data
+      const ttl = await this.emailService.isCodeExist(email)
+      if(ttl > 0){
+        return {
+          message:`请${ttl}秒后再重试`,
+          data:ttl,
+          status:101
+        }
+      }
       let code = await this.emailService.generateCode(email)
+      console.log({to:email,code})
       this.emailService.sendCode({to:email,code})
     }
 }

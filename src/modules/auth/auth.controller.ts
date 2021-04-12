@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Get, UseGuards, HttpCode, HttpStatus, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from './auth.dto';
+import { LoginDto ,AppLoginDto} from './auth.dto';
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 @Controller('auth')
@@ -19,7 +19,7 @@ export class AuthController {
     @Post('app-login')
     @ApiOperation({ title: 'App登录'})
     @HttpCode(HttpStatus.OK)
-    async appLogin(@Body() data){
+    async appLogin(@Body() data:AppLoginDto){
         return await this.authService.appLogin(data)
     }
     @Get('test')
@@ -30,3 +30,4 @@ export class AuthController {
         }
     }
 }
+
