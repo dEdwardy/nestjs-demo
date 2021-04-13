@@ -15,7 +15,7 @@ export class RoomService {
     //   // .leftJoinAndSelect('room.hotel', 'hotel')
     //   .where('room.hotelId = :hotelId', { hotelId })
     //   .getMany()
-    return await this.roomReposity.find({ where : { hotelId }})
+    return await this.roomReposity.find({ where : { hotel:hotelId }})
   }
   store(data){
     return this.roomReposity.save(data)

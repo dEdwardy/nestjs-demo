@@ -16,14 +16,18 @@ export class Room {
   @Column({ nullable: true })
   tags: string;
 
-  @Column()
-  rate: number;
-
   @Column({ nullable: true })
   img: string;
 
-  @Column()
-  price: string;
+  @Column({
+    type:'float'
+  })
+  rate:Number;
+
+  @Column({
+    type:'float'
+  })
+  price:Number;
 
   @ManyToOne(type => Hotel, hotel => hotel.rooms, { nullable: false })
   hotel: Hotel;

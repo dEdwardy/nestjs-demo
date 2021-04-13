@@ -1,6 +1,7 @@
 import { Controller, Get, Query, Response } from '@nestjs/common';
 import { ApiUseTags, ApiOperation, ApiModelProperty } from '@nestjs/swagger';
 import { HotelService } from '../hotel/hotel.service';
+import { RoomService } from '../room/room.service';
 import { PageInfo } from './spider.dto';
 import { SpiderService } from './spider.service';
 
@@ -11,7 +12,8 @@ const puppeteer = require('puppeteer')
 export class SpiderController {
   constructor(
     private readonly spiderService: SpiderService,
-    private readonly hotelService: HotelService
+    private readonly hotelService: HotelService,
+    private readonly roomService: RoomService
   ) { }
   @Get('weather')
   async getWeather () {
@@ -70,7 +72,6 @@ export class SpiderController {
         const items = document.querySelectorAll('.h_item')
         for (let item of items) {
           const img = item.querySelector('img').getAttribute('big-src')
-          console.log(img)
           const name = item.querySelector('.info_cn').textContent
           const location = item.querySelector('.h_info_b2').textContent
           const rate = Number(item.querySelector('.t20.c37e').textContent)
@@ -90,9 +91,8 @@ export class SpiderController {
         return arr
       }, p)
       await browser.close()
-      console.log(data)
       let res = await this.hotelService.store(data)
-      console.log(res)
+      return 'ok'
     } catch (err) {
       console.log(err)
     }
@@ -100,14 +100,16 @@ export class SpiderController {
 
   @Get('hotel-detail')
   @ApiOperation({ title: '爬取酒店Room数据' })
-  async getHotelRooms (@Query() pageInfo: PageInfo) {
-    const base = 'http://hotel.elong.com/';
+  async getHotelRooms () {
+    const base = 'https://m.elong.com/hotel/hoteldetail?hotelid=';
     let urls: any = await this.hotelService.getHotelInfo({
       curPage: 1,
       pageNum: 50
     })
-    // urls = urls.map(i =>  base +(i as any).hotel_id)
     let res = urls[0].filter(i => i.id != 1).map(i => base + i.id)
+    for  (let url of res){
+        await this.getDetailInfo(url)
+    }
     return res
     // let p = pageInfo.current
     // const base = 'http://hotel.elong.com'
@@ -146,35 +148,43 @@ export class SpiderController {
   }
   @Get('hotel-page-1')
   @ApiOperation({ title: '爬取酒店Room page 1' })
-  async getDetailInfo (url: string ="http://hotel.elong.com/2301310") {
+  async getDetailInfo (url: string ="https://m.elong.com/hotel/hoteldetail?hotelid=60770917") {
     try {
-      const hotelId = Number(url.split('com/')[1])
-      const browser = await puppeteer.launch();
+      const iPhone = puppeteer.devices['iPhone 6'];
+      const hotelId = Number(url.split('=')[1])
+      console.log(hotelId)
+      const browser = await puppeteer.launch({
+        headless:true,
+      });
       const page = await browser.newPage();
+      await page.emulate(iPhone);
       await page.goto(url)
+      await page.waitFor(2100)
       const res = await page.evaluate((hotelId) => {
         //list[] name rate price  tags desc img 
-        let roomItems = [...document.querySelectorAll('.htype_item.on')];
+        let roomItems = [...document.querySelectorAll('.rooms .r-item')];
         let arr = []
         for (let i of roomItems) {
-          let name = i.querySelector('.htype_info_name').textContent
+          let name = i.querySelector('.name').textContent
           let rate = Number((3.5 +Math.random()).toFixed(1))
-          let price = Number(i.querySelector('.htype_info_num').textContent)
-          let desc = [...i.querySelectorAll('.htype_info_ty span')].map(i => i.textContent).join(' ')
-          let tags = i.querySelector('.ht_other').querySelector('p').textContent
-          let imgs = [...i.querySelectorAll('.ht_pic_list li img')].map(item => item.getAttribute('bigimgurl')).join(',')
+          let price = 188
+          let desc = '......'
+          let tags = [...i.querySelectorAll('.txt')].map(i => i.textContent).join(',')
+          let img = i.querySelector('img').getAttribute('data-src')
           arr.push({
-            hotelId,
+            hotel:hotelId,
             name,
             rate,
             price,
             desc,
             tags,
-            imgs
+            img
           })
         }
         return arr
       },hotelId)
+      await browser.close()
+      // await this.roomService.store(res)
       return res
     }catch(err){
       console.log(err)
