@@ -70,6 +70,7 @@ import { RoomModule } from './modules/room/room.module';
       database: process.env.MYSQL_DB_NAME,
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
+      debug:true
     }),
     // MonitorModule,
     // UserModule,

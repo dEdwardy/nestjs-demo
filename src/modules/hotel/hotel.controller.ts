@@ -15,7 +15,15 @@ export class HotelController {
       pageNum: 10,
     },
   ) {
-    return this.hotelService.getHotelInfo(options);
+    options.curPage = Number(options?.curPage??1)
+    options.pageNum = Number(options?.pageNum??10)
+    const  [data,total] = await this.hotelService.getHotelInfo(options);
+    return {
+      data,
+      curPage:options.curPage,
+      pageNum:(data as any).length,
+      total
+    }
   }
   @Post()
   @ApiOperation({ title: '新增酒店' })
