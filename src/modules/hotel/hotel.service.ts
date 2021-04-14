@@ -59,4 +59,7 @@ export class HotelService {
   async store (data) {
     return await this.hotelReposity.save(data);
   }
+  async getHotelById(id) {
+    return await this.hotelReposity.findOne({ id})
+  }
 }
