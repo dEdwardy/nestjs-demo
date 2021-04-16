@@ -1,10 +1,12 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { HotelService } from './hotel.service';
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { HotelOptions } from './hotel.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiUseTags('Hotel')
 @Controller('hotel')
+@UseGuards(AuthGuard('jwt'))
 export class HotelController {
   constructor(private readonly hotelService: HotelService) {}
   @Get()

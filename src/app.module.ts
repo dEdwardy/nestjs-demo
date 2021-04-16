@@ -102,14 +102,14 @@ import { RoomModule } from './modules/room/room.module';
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
     },
-    {
-      provide: APP_GUARD,
-      useClass: DemoAuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: DemoRolesGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: DemoAuthGuard,
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: DemoRolesGuard,
+    // },
   ],
 })
 export class AppModule {}

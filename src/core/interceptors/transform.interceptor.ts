@@ -2,9 +2,9 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor, HttpStatus,
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators'
 
-export interface Response<T> {
+export interface IResponse<T> {
   data: T,
-  statusCode: HttpStatus
+  status: HttpStatus
 }
 
 

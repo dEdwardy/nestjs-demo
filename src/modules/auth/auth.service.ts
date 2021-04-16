@@ -39,7 +39,7 @@ export class AuthService {
     const { email, code } = data;
     const info: string = await this.cacheService.get(email);
     if (info && info.toLowerCase() === code.toLowerCase()) {
-      const payload = { email, code };
+      const payload = { email };
       const token = this.signToken(payload);
       console.log(token);
       return {
