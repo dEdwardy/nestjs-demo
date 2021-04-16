@@ -1,5 +1,5 @@
 import { Get, Injectable } from '@nestjs/common';
-import { Room } from './Room.entity';
+import { Room } from './room.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
