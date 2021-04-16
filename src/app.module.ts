@@ -37,8 +37,13 @@ import { SpiderModule } from './modules/spider/spider.module';
 import { MonitorModule } from './modules/monitor/monitor.module';
 import { HotelModule } from './modules/hotel/hotel.module';
 import { RoomModule } from './modules/room/room.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 @Module({
   imports: [
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 300,
+    }),
     //实例化并/或注册队列
     BullModule.registerQueue({
       name:'queue',
@@ -101,6 +106,10 @@ import { RoomModule } from './modules/room/room.module';
     {
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
     // {
     //   provide: APP_GUARD,
