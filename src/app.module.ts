@@ -38,6 +38,7 @@ import { MonitorModule } from './modules/monitor/monitor.module';
 import { HotelModule } from './modules/hotel/hotel.module';
 import { RoomModule } from './modules/room/room.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ChatModule } from './modules/chat/chat.module';
 @Module({
   imports: [
     ThrottlerModule.forRoot({
@@ -93,6 +94,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     SpiderModule,
     HotelModule,
     RoomModule,
+    ChatModule,
     // SocketModule,
     // FriendModule,
   ],
