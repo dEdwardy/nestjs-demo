@@ -124,4 +124,19 @@ export class CacheService {
   //     if(!data)return
   //     return JSON.parse(data)
   // }
+
+  //redis sadd
+  async sadd (key: string, payload: string) {
+    if (!this.client) {
+      await this.getClient()
+    }
+    return this.client.sadd(key, payload)
+  }
+  //redis srem
+  async srem (key: string, payload: string) {
+    if (!this.client) {
+      await this.getClient()
+    }
+    return this.client.srem(key, payload)
+  }
 }
