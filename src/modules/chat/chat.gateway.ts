@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayInit, OnGatewayConnection } from '@nestjs/websockets';
 import { RedisService } from 'nestjs-redis';
 import { Client, Server } from 'socket.io';
@@ -9,7 +10,9 @@ export class ChatGateway implements OnGatewayInit {
     private redisService: RedisService,
     private cacheService: CacheService
   ) { }
+  private readonly logger = new Logger()
   ROOM_DEFAULT = 'room_default';
+  userMap:any = new Map()
   @WebSocketServer() server: Server;
 
   afterInit (server) {
@@ -25,6 +28,8 @@ export class ChatGateway implements OnGatewayInit {
   @SubscribeMessage('login')
   async handleLogin (client:any, name: string) {
     try {
+      this.logger.debug(`${name}登录了`)
+      this.userMap.set(name,client.id)
       //加入默认房间
       client.join(this.ROOM_DEFAULT)
       //广播 有人进来了  通知用户更新 好友列表
@@ -38,9 +43,9 @@ export class ChatGateway implements OnGatewayInit {
 
   @SubscribeMessage('logout')
   async handleLogout (client:any, name) {
-    console.log('logout', name)
+    this.logger.debug(`${name}退出了`)
     try {
-
+      this.userMap.del(name)
       this.server.to(this.ROOM_DEFAULT).emit('message',`${name}离开了`)
       await this.cacheService.srem('online_users', name)
     } catch (err) {
@@ -68,5 +73,16 @@ export class ChatGateway implements OnGatewayInit {
   handleMessage (client: any, payload: any): string {
     console.log(payload + 'xxxxxxxxxxxxxxxxxxxxxxxxxxx')
     return 'Hello world!';
+  }
+  
+  @SubscribeMessage('chat')
+  handleChat(client:any,payload){
+    console.log(`chat from ${payload.from} to ${payload.to}: ${payload.msg}`)
+    let toId = this.userMap.get(payload.to)
+    client.to(toId).emit('chat',{
+      ...payload,
+      time:Date.now(),
+      unread: true
+    })
   }
 }

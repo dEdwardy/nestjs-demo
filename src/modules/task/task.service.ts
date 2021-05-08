@@ -7,7 +7,6 @@ import { SpiderService } from '../spider/spider.service';
 export class TaskService {
     constructor(private readonly emailService: EmailService, private infoService: SpiderService) {
     }
-
     private readonly logger = new Logger(TaskService.name)
 
     /**
