@@ -12,16 +12,22 @@ export class ChatGateway implements OnGatewayInit {
   ) { }
   private readonly logger = new Logger()
   ROOM_DEFAULT = 'room_default';
-  userMap:any = new Map()
+  // userMap:any = new Map()
+  userMap:any = {};
   @WebSocketServer() server: Server;
 
   afterInit (server) {
     // console.log(server)
   }
+  handleClose(){
+    this.logger.debug(`连接已断开`)
+  }
   handleConnection (client) {
+    this.logger.debug(`${client.id}              已连接`)
     // console.log('ClientId:'+client.id+'进入')
   }
   handleDisconnect (client) {
+    this.logger.debug(`${client.id}           已断开连接`)
     // console.log(client?.handshake?.query.token)
     // console.log('ClientId:'+client.id+'离开')
   }
@@ -29,7 +35,9 @@ export class ChatGateway implements OnGatewayInit {
   async handleLogin (client:any, name: string) {
     try {
       this.logger.debug(`${name}登录了`)
-      this.userMap.set(name,client.id)
+      // this.userMap.set(name,client.id)
+      this.userMap[name] = client.id
+      this.logger.debug(JSON.stringify(this.userMap))
       //加入默认房间
       client.join(this.ROOM_DEFAULT)
       //广播 有人进来了  通知用户更新 好友列表
@@ -43,9 +51,11 @@ export class ChatGateway implements OnGatewayInit {
 
   @SubscribeMessage('logout')
   async handleLogout (client:any, name) {
-    this.logger.debug(`${name}退出了`)
     try {
-      this.userMap.del(name)
+      this.logger.debug(`${name}退出了`)
+      // this.userMap.delete(name)
+      delete this.userMap[name]
+      this.logger.debug(JSON.stringify(this.userMap))
       this.server.to(this.ROOM_DEFAULT).emit('message',`${name}离开了`)
       await this.cacheService.srem('online_users', name)
     } catch (err) {
@@ -77,8 +87,9 @@ export class ChatGateway implements OnGatewayInit {
   
   @SubscribeMessage('chat')
   handleChat(client:any,payload){
-    console.log(`chat from ${payload.from} to ${payload.to}: ${payload.msg}`)
-    let toId = this.userMap.get(payload.to)
+    this.logger.debug(`chat from ${payload.from} to ${payload.to}: ${payload.msg}`)
+    this.logger.debug(JSON.stringify(this.userMap))
+    let toId = this.userMap[payload.to]
     client.to(toId).emit('chat',{
       ...payload,
       time:Date.now(),
