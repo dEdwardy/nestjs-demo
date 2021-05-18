@@ -1,10 +1,12 @@
-import { Logger } from '@nestjs/common';
-import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayInit, OnGatewayConnection } from '@nestjs/websockets';
+import { Logger, UseFilters } from '@nestjs/common';
+import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayInit, OnGatewayConnection, BaseWsExceptionFilter } from '@nestjs/websockets';
 import { RedisService } from 'nestjs-redis';
 import { Client, Server } from 'socket.io';
+import { WsExceptionsFilter } from '../../core/filters/ws-exception.filter';
 import { CacheService } from '../cache/cache.service';
 
 @WebSocketGateway()
+@UseFilters(new WsExceptionsFilter)
 export class ChatGateway implements OnGatewayInit {
   constructor(
     private redisService: RedisService,
@@ -19,7 +21,7 @@ export class ChatGateway implements OnGatewayInit {
   afterInit (server) {
     // console.log(server)
   }
-  handleClose(){
+  handleClose(client){
     this.logger.debug(`连接已断开`)
   }
   handleConnection (client) {
@@ -57,6 +59,7 @@ export class ChatGateway implements OnGatewayInit {
       delete this.userMap[name]
       this.logger.debug(JSON.stringify(this.userMap))
       this.server.to(this.ROOM_DEFAULT).emit('message',`${name}离开了`)
+      this.server.to(this.ROOM_DEFAULT).emit('onlineChange',`${name}离开了`)
       await this.cacheService.srem('online_users', name)
     } catch (err) {
       console.log(err)
@@ -95,5 +98,31 @@ export class ChatGateway implements OnGatewayInit {
       time:Date.now(),
       unread: true
     })
+  }
+
+  //webrtc  
+  @SubscribeMessage('icecandidate')
+  onIceCandidate(client,payload){
+    console.log(payload)
+    this.server.to(client.id).emit('icecandidate',{ icecandidate:payload?.icecandidate, id: client?.id })
+  }
+
+  @SubscribeMessage('offer')
+  onOffer(client,payload){
+    this.logger.debug('offer',payload)
+    let socketId = this.userMap[payload.username]
+    this.server.to(socketId).emit('called',{ offer:payload.offer,id:client.id,name:payload.username})
+  }
+
+  @SubscribeMessage('answer')
+  onAnswer(client,payload){
+    let id = this.userMap[payload.username]
+    this.logger.debug('answer',payload)
+    this.server.to(id).emit('answer', {answer:payload.answer})
+  }
+  
+  @SubscribeMessage('rejectCall')
+  onRejectCall(client,payload){
+    
   }
 }
