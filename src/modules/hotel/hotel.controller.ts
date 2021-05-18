@@ -7,7 +7,7 @@ import { Throttle } from '@nestjs/throttler';
 
 @ApiUseTags('Hotel')
 @Controller('hotel')
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
 // @Throttle(60, 60)
 export class HotelController {
   constructor(private readonly hotelService: HotelService) { }
