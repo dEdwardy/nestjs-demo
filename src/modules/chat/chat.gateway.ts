@@ -103,26 +103,30 @@ export class ChatGateway implements OnGatewayInit {
   //webrtc  
   @SubscribeMessage('icecandidate')
   onIceCandidate(client,payload){
-    console.log(payload)
-    this.server.to(client.id).emit('icecandidate',{ icecandidate:payload?.icecandidate, id: client?.id })
+    this.logger.debug(`icecandidate`)
+    this.logger.debug(payload?.icecandidate)
+    this.logger.debug(client?.id)
+    let socketId = this.userMap[payload.username]
+    this.server.to(socketId).emit('icecandidate',{ icecandidate:payload?.icecandidate, id: client?.id })
   }
 
   @SubscribeMessage('offer')
   onOffer(client,payload){
-    this.logger.debug('offer',payload)
+    this.logger.debug('offer',payload.offer)
     let socketId = this.userMap[payload.username]
-    this.server.to(socketId).emit('called',{ offer:payload.offer,id:client.id,name:payload.username})
+    this.server.to(socketId).emit('called',{ offer:payload.offer,id:client.id,username:payload.username})
   }
 
   @SubscribeMessage('answer')
   onAnswer(client,payload){
-    let id = this.userMap[payload.username]
+    let socketId = this.userMap[payload.username]
     this.logger.debug('answer',payload)
-    this.server.to(id).emit('answer', {answer:payload.answer})
+    this.server.to(socketId).emit('answer', {answer:payload.answer})
   }
   
   @SubscribeMessage('rejectCall')
   onRejectCall(client,payload){
-    
+    let socketId = this.userMap[payload.username]
+    this.server.to(socketId).emit('callRejected')
   }
 }
