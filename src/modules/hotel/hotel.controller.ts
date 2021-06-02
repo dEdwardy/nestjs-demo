@@ -3,7 +3,7 @@ import { HotelService } from './hotel.service';
 import { ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { HotelOptions } from './hotel.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { Throttle } from '@nestjs/throttler';
+// import { Throttle } from '@nestjs/throttler';
 
 @ApiUseTags('Hotel')
 @Controller('hotel')

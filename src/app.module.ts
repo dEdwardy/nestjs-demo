@@ -37,14 +37,15 @@ import { SpiderModule } from './modules/spider/spider.module';
 import { MonitorModule } from './modules/monitor/monitor.module';
 import { HotelModule } from './modules/hotel/hotel.module';
 import { RoomModule } from './modules/room/room.module';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+// import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ChatModule } from './modules/chat/chat.module';
+import { AppController } from './app.controller';
 @Module({
   imports: [
-    ThrottlerModule.forRoot({
-      ttl: 60,
-      limit: 300,
-    }),
+    // ThrottlerModule.forRoot({
+    //   ttl: 60,
+    //   limit: 300,
+    // }),
     //实例化并/或注册队列
     BullModule.registerQueue({
       name:'queue',
@@ -87,7 +88,7 @@ import { ChatModule } from './modules/chat/chat.module';
     // CommentModule,
     // RoleModule,
     // FileModule,
-    // RoutesModule,
+    RoutesModule,
     // CacheModule,
     // EmailModule,
     AudioModule,
@@ -98,7 +99,7 @@ import { ChatModule } from './modules/chat/chat.module';
     // SocketModule,
     // FriendModule,
   ],
-  controllers: [],
+  controllers: [ AppController ],
   providers: [
     AppService,
     {
@@ -109,10 +110,10 @@ import { ChatModule } from './modules/chat/chat.module';
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
     },
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ThrottlerGuard,
+    // },
     // {
     //   provide: APP_GUARD,
     //   useClass: DemoAuthGuard,

@@ -4,7 +4,7 @@ import { RedisService } from 'nestjs-redis';
 @Injectable()
 export class CacheService {
   private client;
-  private lock_key = 'test';
+  private lock_key = 'lock';
   private whileCount = 0;
   constructor(private redisService: RedisService) {
     this.getClient();
@@ -60,7 +60,7 @@ export class CacheService {
       let lock = await this.lock(key)
       if (lock) {
         //查mysql
-        return
+        return 'lock'
       } else {
         // let ttl = await this.client.ttl(this.lock_key)
         // if(ttl<0){
@@ -83,22 +83,25 @@ export class CacheService {
     return await this.client.del(this.lock_key);
   }
   //加锁  setnx
-  async lock (key: string, value: string = '', seconds = 20, timeout = 200) {
+  async lock (key: string, value: string = '', seconds = 9999999, timeout = 200) {
     let res
     if (!this.client) {
       await this.getClient()
     }
     try {
       //EX 秒 PX毫秒  NX加锁
-      res = await this.client.set(this.lock_key, '3333333333', 'EX', seconds, 'NX')
+      res = await this.client.set(this.lock_key, 100, 'EX', seconds, 'NX')
+      // console.log(res)
       if (res === 'OK') {
+        // console.log('ok')
         return true
       } else {
+        // console.log('not ok locked ')
         return false
       }
 
     } catch (error) {
-      console.error(error)
+      // console.error(error)
     } finally {
 
     }
